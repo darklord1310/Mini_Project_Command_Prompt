@@ -1,11 +1,15 @@
 #ifndef command_prompt_H
 #define command_prompt_H
-#define arrow_up 	72		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define arrow_down  80		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define arrow_left 	75		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define arrow_right 77		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define key_delete  83		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define key_insert  82		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define arrow_up 		72		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define arrow_down  	80		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define arrow_left 		75		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define arrow_right 	77		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define key_delete  	83		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define key_insert 	 	82		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define key_pageup  	73		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define key_pagedown 	81		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define key_home 		71		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define key_end 		79		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
 
 /*
 \a (alert) Produces an audible or visible alert. The active
@@ -39,6 +43,8 @@
 */
 
 void key_test_backspace(char *string);
+int key_test_arrowup(int escapecode, int ascii_code);
+int key_test_arrowdown(int escapecode, int ascii_code);
 
 
 #endif // command_prompt_H
