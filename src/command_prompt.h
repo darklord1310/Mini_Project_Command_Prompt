@@ -10,6 +10,8 @@
 #define key_pagedown 	81		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
 #define key_home 		71		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
 #define key_end 		79		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define key_enter		13		// this is not a special key, only give 1 byte which is 13
+#define key_backspace	 8		// this is not a special key, only give 1 byte which is 8
 
 /*
 \a (alert) Produces an audible or visible alert. The active
@@ -42,9 +44,19 @@
 					unspecified.
 */
 
-void key_test_backspace(char *string);
-int key_test_arrowup(int escapecode, int ascii_code);
-int key_test_arrowdown(int escapecode, int ascii_code);
+
+int read_arrowup(int escapecode, int ascii_code);
+int read_arrowdown(int escapecode, int ascii_code);
+int read_arrowleft(int escapecode, int ascii_code);
+int read_arrowright(int escapecode, int ascii_code);
+int read_delete(int escapecode, int ascii_code);
+int read_insert(int escapecode, int ascii_code);
+int read_home(int escapecode, int ascii_code);
+int read_pageup(int escapecode, int ascii_code);
+int read_pagedown(int escapecode, int ascii_code);
+int read_end(int escapecode, int ascii_code);
+int read_enter(int escapecode, int ascii_code);
+int read_backspace(int escapecode, int ascii_code);
 
 
 #endif // command_prompt_H
