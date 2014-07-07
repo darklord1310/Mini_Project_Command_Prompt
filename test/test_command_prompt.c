@@ -3,6 +3,7 @@
 #include "circularbuffer.h"
 #include <stdio.h>
 #include "mock_get_ch.h"
+#include "mock_putch.h"
 #define length_of_buffer 250
 
 void setUp(void)
@@ -272,25 +273,30 @@ void test_read_backspace_given_escape_code_and_ascii_code_both_are_key_backspace
 }
 
 
-
 void test_getKeyAndStore()
 {
 	int key_return;
-	
-	
+	char *buffer;
+	buffer = malloc(sizeof(char)*1024);
+		
 	//mock
-	get_character_ExpectAndReturn(97);
-	
+	get_character_ExpectAndReturn('a');
+	put_character_Expect('a');
+	get_character_ExpectAndReturn('b');
+	put_character_Expect('b');
+	get_character_ExpectAndReturn('c');
+	put_character_Expect('c');
+	get_character_ExpectAndReturn(escapecode2);
+	get_character_ExpectAndReturn(arrow_up);
 	
 	//run
-	key_return = get_key_and_store();
-	
-
+	key_return = get_key_and_store(buffer);
+	TEST_ASSERT_EQUAL(0xE048 , key_return); 
 }
 
 
 
-// void xtest_string_given_abc_should_return_ab_after_backspace_is_entered(void)
+// void test_string_given_abc_should_return_ab_after_backspace_is_entered(void)
 // {
 	// CircularBuffer *cb = circularBufferNew(length_of_buffer);
 	// CircularBufferAdd(cb,"abc");

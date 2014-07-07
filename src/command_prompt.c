@@ -1,7 +1,10 @@
 #include "command_prompt.h"
 #include <stdio.h>
 #include <Windows.h>
+#include <malloc.h>
 #include "circularbuffer.h"
+#include "get_ch.h"
+#include "putch.h"
 
 
 /* Test to read for the arrow up key
@@ -223,6 +226,51 @@ int read_backspace(int escapecode, int ascii_code)
 	else	
 		return 0;
 }
+
+
+
+
+void check_for_special_key(int escapecode, int ascii_code)
+{
+	
+}
+
+
+
+
+/*  To get an string input and save it into buffer 
+ *  Return :     
+ * 			Keycode is the escape and ascii code for the special keys
+ *
+ */
+Keycode get_key_and_store(char *temp_buffer)
+{
+	int   key_code , upper_byte , lower_byte;
+		
+	while(1)
+	{
+		key_code = get_character();
+		if ( key_code == escapecode1 || key_code == escapecode2)
+		{
+			upper_byte = (key_code<<8);
+			lower_byte = get_character();
+			key_code = (upper_byte|lower_byte);
+			return key_code;
+		}
+		else if( key_code == key_enter || key_code == key_delete)
+		{
+			lower_byte = key_code;
+			upper_byte = (key_code<<8);
+			key_code = (upper_byte|lower_byte);
+			return key_code;
+		}
+		*temp_buffer = key_code;
+		put_character(*temp_buffer);
+		temp_buffer++;
+	}
+}
+
+
 
 
 /*  Test for the backspace function

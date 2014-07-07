@@ -1,5 +1,7 @@
 #include <stdio.h>
-#include <conio.h>
+#include <malloc.h>
+#include "get_ch.c"
+#include "putch.c"
 
 
 void main()
@@ -7,7 +9,10 @@ void main()
 	int escape_code;
 	int ascii_code;
 	int ans;
+	int keycode;
 	
+	
+	//get input
 	do
 	{
 	printf("Enter your key : ");
@@ -26,6 +31,32 @@ void main()
 	printf("\n");
 	}while( ans != 0);
 	
+	
+	
+	
+	//getKeyAndStore
+	char *temp_buffer , *initial_pos;
+	int   key_code , i;
+	temp_buffer = malloc(sizeof(char)*1024);	
+	initial_pos = temp_buffer;
+	
+	key_code = get_character();
+	*temp_buffer = key_code;
+	put_character(*temp_buffer);
+	key_code = get_character();
+	*(++temp_buffer) = key_code;
+	put_character(*temp_buffer);
+	key_code = get_character();
+	*(++temp_buffer) = key_code;
+	put_character(*temp_buffer);
+	printf("\n");
+	
+	for ( i =0 ; i <3 ;i++)
+	{
+		printf("%c", *initial_pos);
+		initial_pos++;
+	}
+
 	
 	system("pause");
 }

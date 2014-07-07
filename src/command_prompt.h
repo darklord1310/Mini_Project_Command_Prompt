@@ -1,17 +1,24 @@
 #ifndef command_prompt_H
 #define command_prompt_H
-#define arrow_up 		72		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define arrow_down  	80		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define arrow_left 		75		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define arrow_right 	77		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define key_delete  	83		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define key_insert 	 	82		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define key_pageup  	73		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define key_pagedown 	81		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define key_home 		71		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define key_end 		79		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define key_enter		13		// this is not a special key, only give 1 byte which is 13
-#define key_backspace	 8		// this is not a special key, only give 1 byte which is 8
+#define arrow_up 			  72		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define arrow_down  		  80		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define arrow_left 			  75		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define arrow_right 		  77		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define key_delete  		  83		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define key_insert 	 		  82		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define key_pageup  		  73		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define key_pagedown 		  81		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define key_home 			  71		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define key_end 			  79		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define key_enter			  13		// this is not a special key, only give 1 byte which is 13
+#define key_backspace	 	   8		// this is not a special key, only give 1 byte which is 8
+#define size_temp_buffer 	1024		// size of the temp_buffer is 1024 bytes
+#define escapecode1			   0	
+#define escapecode2			 224	
+
+
+typedef int Keycode;
+
 
 /*
 \a (alert) Produces an audible or visible alert. The active
@@ -57,6 +64,14 @@ int read_pagedown(int escapecode, int ascii_code);
 int read_end(int escapecode, int ascii_code);
 int read_enter(int escapecode, int ascii_code);
 int read_backspace(int escapecode, int ascii_code);
+Keycode get_key_and_store();  // get key press and store character
+void dumpBuffer();
+void check_for_special_key(int escapecode, int ascii_code);
 
+
+/* some notes about mini project
+ *  - need to modified the circular buffer, will have 2 pointer which are current and head
+	  no more tail pointer
+ */
 
 #endif // command_prompt_H
