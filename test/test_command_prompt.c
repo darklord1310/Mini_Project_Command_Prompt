@@ -2,6 +2,7 @@
 #include "command_prompt.h"
 #include "circularbuffer.h"
 #include <stdio.h>
+#include <malloc.h>
 #include "mock_get_ch.h"
 #include "mock_putch.h"
 #define length_of_buffer 250
@@ -273,10 +274,11 @@ void test_read_backspace_given_escape_code_and_ascii_code_both_are_key_backspace
 }
 
 
-void test_getKeyAndStore()
+
+void test_getKeyAndStore_give_abc_when_arrow_up_being_pressed_it_will_save_into_buffer_and_return_key_code_for_arrow_up()
 {
-	int key_return;
-	char *buffer;
+	int key_return;  // the variable which will get the code which consists of escape and ascii code
+	char *buffer;	// this is the temporary buffer where will save the input given by user
 	buffer = malloc(sizeof(char)*1024);
 		
 	//mock
@@ -291,8 +293,75 @@ void test_getKeyAndStore()
 	
 	//run
 	key_return = get_key_and_store(buffer);
-	TEST_ASSERT_EQUAL(0xE048 , key_return); 
+	TEST_ASSERT_EQUAL_STRING("abc", buffer);
+	TEST_ASSERT_EQUAL( (escapecode2<<8)|arrow_up , key_return); 
 }
+
+
+void test_getKeyAndStore_give_1_add_2_when_del_being_pressed_it_will_save_into_buffer_and_return_key_code_for_del()
+{
+	int key_return;  // the variable which will get the code which consists of escape and ascii code
+	char *buffer;	// this is the temporary buffer where will save the input given by user
+	buffer = malloc(sizeof(char)*1024);
+		
+	//mock
+	get_character_ExpectAndReturn('1');
+	put_character_Expect('1');
+	get_character_ExpectAndReturn('+');
+	put_character_Expect('+');
+	get_character_ExpectAndReturn('2');
+	put_character_Expect('2');
+	get_character_ExpectAndReturn(escapecode2);
+	get_character_ExpectAndReturn(key_delete);
+	
+	//run
+	key_return = get_key_and_store(buffer);
+	TEST_ASSERT_EQUAL_STRING("1+2", buffer);
+	TEST_ASSERT_EQUAL( (escapecode2<<8)|key_delete , key_return); 
+}
+
+
+
+void test_getKeyAndStore_give_1_add_2_mul_4_divide_3_when_enter_being_pressed_it_will_save_into_buffer_and_return_key_code_for_enter()
+{
+	int key_return;  // the variable which will get the code which consists of escape and ascii code
+	char *buffer;	// this is the temporary buffer where will save the input given by user
+	buffer = malloc(sizeof(char)*1024);
+		
+	//mock
+	get_character_ExpectAndReturn('1');
+	put_character_Expect('1');
+	get_character_ExpectAndReturn('+');
+	put_character_Expect('+');
+	get_character_ExpectAndReturn('2');
+	put_character_Expect('2');
+	get_character_ExpectAndReturn('*');
+	put_character_Expect('*');
+	get_character_ExpectAndReturn('4');
+	put_character_Expect('4');
+	get_character_ExpectAndReturn('/');
+	put_character_Expect('/');
+	get_character_ExpectAndReturn('3');
+	put_character_Expect('3');
+	get_character_ExpectAndReturn(key_enter);
+	
+	//run
+	key_return = get_key_and_store(buffer);
+	TEST_ASSERT_EQUAL_STRING("1+2*4/3", buffer);
+	TEST_ASSERT_EQUAL( (key_enter<<8)|key_enter , key_return); 
+}
+
+
+
+void test_backspace()
+{
+	char *buffer = "abcdef";
+	
+	backspace(buffer);
+	
+	printf("%s", buffer);
+}
+
 
 
 

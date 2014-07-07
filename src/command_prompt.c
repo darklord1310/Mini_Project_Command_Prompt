@@ -5,7 +5,7 @@
 #include "circularbuffer.h"
 #include "get_ch.h"
 #include "putch.h"
-
+#include <string.h>
 
 /* Test to read for the arrow up key
  * Input :
@@ -233,6 +233,8 @@ int read_backspace(int escapecode, int ascii_code)
 void check_for_special_key(int escapecode, int ascii_code)
 {
 	
+
+	
 }
 
 
@@ -241,7 +243,7 @@ void check_for_special_key(int escapecode, int ascii_code)
 /*  To get an string input and save it into buffer 
  *  Return :     
  * 			Keycode is the escape and ascii code for the special keys
- *
+ *			where upper byte is escape code and lower byte is ascii code
  */
 Keycode get_key_and_store(char *temp_buffer)
 {
@@ -257,7 +259,7 @@ Keycode get_key_and_store(char *temp_buffer)
 			key_code = (upper_byte|lower_byte);
 			return key_code;
 		}
-		else if( key_code == key_enter || key_code == key_delete)
+		else if( key_code == key_enter || key_code == key_backspace)
 		{
 			lower_byte = key_code;
 			upper_byte = (key_code<<8);
@@ -273,14 +275,22 @@ Keycode get_key_and_store(char *temp_buffer)
 
 
 
-/*  Test for the backspace function
+/*  To perform backspace
  *  Input :     
  * 			string is a pointer that will point to a buffer of character
  *
  */
-// void key_test_backspace(char *string)
-// {
-	// printf("%s",string);
+void backspace(char *string)
+{
+	int buffer_length;
+	char *temp_string ;
+	temp_string = malloc(sizeof(char)*1024);
+	buffer_length = strlen(string);
+	strncpy(temp_string, string, (buffer_length-1));
+	temp_string[buffer_length-1] = '\0';
+	string = temp_string;
+
+	printf("%s \n",string);
 	// printf("\b");
-// }
+}
 
