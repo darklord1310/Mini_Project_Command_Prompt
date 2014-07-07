@@ -2,6 +2,7 @@
 #include "command_prompt.h"
 #include "circularbuffer.h"
 #include <stdio.h>
+#include "mock_get_ch.h"
 #define length_of_buffer 250
 
 void setUp(void)
@@ -269,6 +270,24 @@ void test_read_backspace_given_escape_code_and_ascii_code_both_are_key_backspace
 	result = read_backspace(key_backspace, key_backspace);
 	TEST_ASSERT_EQUAL(1, result);
 }
+
+
+
+void test_getKeyAndStore()
+{
+	int key_return;
+	
+	
+	//mock
+	get_character_ExpectAndReturn(97);
+	
+	
+	//run
+	key_return = get_key_and_store();
+	
+
+}
+
 
 
 // void xtest_string_given_abc_should_return_ab_after_backspace_is_entered(void)
