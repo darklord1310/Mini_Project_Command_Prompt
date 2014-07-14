@@ -1,23 +1,46 @@
 #ifndef command_prompt_H
 #define command_prompt_H
-#define arrow_up 			  72		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define arrow_down  		  80		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define arrow_left 			  75		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define arrow_right 		  77		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define key_delete  		  83		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define key_insert 	 		  82		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define key_pageup  		  73		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define key_pagedown 		  81		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define key_home 			  71		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define key_end 			  79		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define key_enter			  13		// this is not a special key, only give 1 byte which is 13
-#define key_backspace	 	   8		// this is not a special key, only give 1 byte which is 8
-#define size_temp_buffer 	1024		// size of the temp_buffer is 1024 bytes
-#define escapecode1			   0	
-#define escapecode2			 224	
-
+#define ARROW_UP 			  72		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define ARROW_DOWN  		  80		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define ARROW_LEFT 			  75		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define ARROW_RIGHT 		  77		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define KEY_DELETE  		  83		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define KEY_INSERT 	 		  82		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define KEY_PAGEUP  		  73		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define KEY_PAGEDOWN 		  81		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define KEY_HOME 			  71		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define KEY_END 			  79		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define KEY_ENTER			  13		// this is not a special key, only give 1 byte which is 13
+#define KEY_BACKSPACE	 	   8		// this is not a special key, only give 1 byte which is 8
+#define KEY_ESCAPE			  27	
+#define MAX_BUFFER_SIZE		1024		
+#define ESCAPECODE1			   0	
+#define ESCAPECODE2			 224	
+#define NORMALCODE			 255
+#define CODE_ARROWUP		 0xE048
+#define CODE_ARROWDOWN		 0xE050
+#define CODE_ARROWLEFT		 0xE04B
+#define CODE_ARROWRIGHT		 0xE04D
+#define CODE_DELETE1		 0xE053
+#define CODE_DELETE2		 0x0053
+#define CODE_INSERT1		 0xE052
+#define CODE_INSERT2		 0x0052
+#define CODE_PAGEUP1		 0xE049
+#define CODE_PAGEUP2		 0x0049
+#define CODE_PAGEDOWN1		 0xE051
+#define CODE_PAGEDOWN2	     0x0051
+#define CODE_HOME1 			 0xE047	
+#define CODE_HOME2			 0x0047
+#define CODE_END1 			 0xE04F
+#define CODE_END2 			 0x004F		
+#define CODE_ENTER			 0xFF0D		
+#define CODE_BACKSPACE	 	 0xFF08		
+#define CODE_ESCAPE			 0xFF1B
 
 typedef int Keycode;
+
+char buffer[MAX_BUFFER_SIZE];
+
 
 
 /*
@@ -52,22 +75,24 @@ typedef int Keycode;
 */
 
 
-int read_arrowup(int escapecode, int ascii_code);
-int read_arrowdown(int escapecode, int ascii_code);
-int read_arrowleft(int escapecode, int ascii_code);
-int read_arrowright(int escapecode, int ascii_code);
-int read_delete(int escapecode, int ascii_code);
-int read_insert(int escapecode, int ascii_code);
-int read_home(int escapecode, int ascii_code);
-int read_pageup(int escapecode, int ascii_code);
-int read_pagedown(int escapecode, int ascii_code);
-int read_end(int escapecode, int ascii_code);
-int read_enter(int escapecode, int ascii_code);
-int read_backspace(int escapecode, int ascii_code);
-Keycode get_key_and_store();  // get key press and store character
-void dumpBuffer();
-void check_for_special_key(int escapecode, int ascii_code);
 
+Keycode get_key_press();  				   // get key press 
+Keycode is_special_key(int key_code);	   // check whether input is special key or not
+Keycode user_input_interface();
+void check_special_keys(int key_code);
+void handle_BACKSPACE();
+void handle_ARROWUP();
+void handle_ARROWDOWN();
+void handle_ARROWLEFT();
+void handle_ARROWRIGHT();
+void handle_HOME();
+void handle_DEL();
+void handle_PAGEUP();
+void handle_PAGEDOWN();
+void handle_INSERT();
+void handle_END();
+void handle_ENTER();
+void dumpBuffer();
 
 /* some notes about mini project
  *  - need to modified the circular buffer, will have 2 pointer which are current and head

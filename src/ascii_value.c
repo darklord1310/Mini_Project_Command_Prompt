@@ -30,17 +30,18 @@ void backspace(char *string);
 void main()
 {
 	int keycode;
-	char *buffer;
-	buffer = malloc(sizeof(char)*1024);
+	// buffer = malloc(sizeof(char)*1024);
 	
 	
-	keycode = get_key_and_store(buffer);
+	char *buffer = "abcdef";
+	printf("%s\b",buffer);
+	// keycode = get_key_and_store(buffer);
 	
-	if(keycode == 0x0808)
-		backspace(buffer);
+	// if(keycode == 0x0808)
+		// backspace(buffer);
 	
 
-	printf("buffer is %s  \n", buffer); 
+	// printf("buffer is %s  \n", buffer); 
 	system("pause");
 	
 }

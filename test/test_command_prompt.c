@@ -15,363 +15,94 @@ void tearDown(void)
 {
 }
 
-// testing for arrow up
-void test_read_arrowup_given_escape_code_224_ascii_code_arrow_up_should_return_1()
+
+void test_get_key_press_given_1_should_return_49()
 {
-	int result;
-	result = read_arrowup(224, arrow_up);
-	TEST_ASSERT_EQUAL(1, result);
-}
-
-void test_read_arrowup_given_escape_code_0_ascii_code_arrow_up_should_return_1()
-{
-	int result;
-	result = read_arrowup(0, arrow_up);
-	TEST_ASSERT_EQUAL(1, result);
-}
-
-void test_read_arrowup_given_escape_code_224_ascii_code_99_should_return_0()
-{
-	int result;
-	result = read_arrowup(224, 99);
-	TEST_ASSERT_EQUAL(0, result);
-}
-
-
-
-// testing for arrow down
-void test_read_arrowdown_given_escape_code_224_ascii_code_arrow_down_should_return_1()
-{
-	int result;
-	result = read_arrowdown(224, arrow_down);
-	TEST_ASSERT_EQUAL(1, result);
-}
-
-void test_read_arrowdown_given_escape_code_0_ascii_code_arrow_down_should_return_1()
-{
-	int result;
-	result = read_arrowdown(0, arrow_down);
-	TEST_ASSERT_EQUAL(1, result);
-}
-
-void test_read_arrowdown_given_escape_code_224_ascii_code_33_should_return_0()
-{
-	int result;
-	result = read_arrowdown(224, 33);
-	TEST_ASSERT_EQUAL(0, result);
-}
-
-
-
-// testing for arrow left
-void test_read_arrowleft_given_escape_code_224_ascii_code_arrow_left_should_return_1()
-{
-	int result;
-	result = read_arrowleft(224, arrow_left);
-	TEST_ASSERT_EQUAL(1, result);
-}
-
-void test_read_arrowleft_given_escape_code_0_ascii_code_arrow_left_should_return_1()
-{
-	int result;
-	result = read_arrowleft(0, arrow_left);
-	TEST_ASSERT_EQUAL(1, result);
-}
-
-void test_read_arrowleft_given_escape_code_224_ascii_code_12_should_return_0()
-{
-	int result;
-	result = read_arrowleft(224, 12);
-	TEST_ASSERT_EQUAL(0, result);
-}
-
-
-
-// testing for arrow right
-void test_read_arrowright_given_escape_code_224_ascii_code_arrow_right_should_return_1()
-{
-	int result;
-	result = read_arrowright(224, arrow_right);
-	TEST_ASSERT_EQUAL(1, result);
-}
-
-void test_read_arrowright_given_escape_code_0_ascii_code_arrow_right_should_return_1()
-{
-	int result;
-	result = read_arrowright(0, arrow_right);
-	TEST_ASSERT_EQUAL(1, result);
-}
-
-void test_read_arrowright_given_escape_code_224_ascii_code_9_should_return_0()
-{
-	int result;
-	result = read_arrowright(224, 9);
-	TEST_ASSERT_EQUAL(0, result);
-}
-
-
-
-// testing for delete key
-void test_read_delete_given_escape_code_224_ascii_code_key_delete_should_return_1()
-{
-	int result;
-	result = read_delete(224, key_delete);
-	TEST_ASSERT_EQUAL(1, result);
-}
-
-void test_read_delete_given_escape_code_0_ascii_code_key_delete_should_return_1()
-{
-	int result;
-	result = read_delete(0, key_delete);
-	TEST_ASSERT_EQUAL(1, result);
-}
-
-void test_read_delete_given_escape_code_224_ascii_code_1_should_return_0()
-{
-	int result;
-	result = read_delete(224, 1);
-	TEST_ASSERT_EQUAL(0, result);
-}
-
-
-
-
-// testing for insert key
-void test_read_insert_given_escape_code_224_ascii_code_key_insert_should_return_1()
-{
-	int result;
-	result = read_insert(224, key_insert);
-	TEST_ASSERT_EQUAL(1, result);
-}
-
-void test_read_insert_given_escape_code_0_ascii_code_key_insert_should_return_1()
-{
-	int result;
-	result = read_insert(0, key_insert);
-	TEST_ASSERT_EQUAL(1, result);
-}
-
-void test_read_insert_given_escape_code_224_ascii_code_0_should_return_0()
-{
-	int result;
-	result = read_insert(224, 0);
-	TEST_ASSERT_EQUAL(0, result);
-}
-
-
-
-
-// testing for home key
-void test_read_home_given_escape_code_224_ascii_code_key_home_should_return_1()
-{
-	int result;
-	result = read_home(224, key_home);
-	TEST_ASSERT_EQUAL(1, result);
-}
-
-void test_read_home_given_escape_code_0_ascii_code_key_home_should_return_1()
-{
-	int result;
-	result = read_home(0, key_home);
-	TEST_ASSERT_EQUAL(1, result);
-}
-
-void test_read_home_given_escape_code_224_ascii_code_87_should_return_0()
-{
-	int result;
-	result = read_home(224, 87);
-	TEST_ASSERT_EQUAL(0, result);
-}
-
-
-
-// testing for pageup key
-void test_read_pageup_given_escape_code_224_ascii_code_key_pageup_should_return_1()
-{
-	int result;
-	result = read_pageup(224, key_pageup);
-	TEST_ASSERT_EQUAL(1, result);
-}
-
-void test_read_pageup_given_escape_code_0_ascii_code_key_pageup_should_return_1()
-{
-	int result;
-	result = read_pageup(0, key_pageup);
-	TEST_ASSERT_EQUAL(1, result);
-}
-
-void test_read_pageup_given_escape_code_224_ascii_code_23_should_return_0()
-{
-	int result;
-	result = read_pageup(224, 23);
-	TEST_ASSERT_EQUAL(0, result);
-}
-
-
-
-// testing for pagedown key
-void test_read_pagedown_given_escape_code_224_ascii_code_key_pagedown_should_return_1()
-{
-	int result;
-	result = read_pagedown(224, key_pagedown);
-	TEST_ASSERT_EQUAL(1, result);
-}
-
-void test_read_pagedown_given_escape_code_0_ascii_code_key_pagedown_should_return_1()
-{
-	int result;
-	result = read_pagedown(0, key_pagedown);
-	TEST_ASSERT_EQUAL(1, result);
-}
-
-void test_read_pagedown_given_escape_code_224_ascii_code_23_should_return_0()
-{
-	int result;
-	result = read_pagedown(224, 23);
-	TEST_ASSERT_EQUAL(0, result);
-}
-
-// testing for end key
-void test_read_end_given_escape_code_224_ascii_code_key_end_should_return_1()
-{
-	int result;
-	result = read_end(224, key_end);
-	TEST_ASSERT_EQUAL(1, result);
-}
-
-void test_read_end_given_escape_code_0_ascii_code_key_end_should_return_1()
-{
-	int result;
-	result = read_end(0, key_end);
-	TEST_ASSERT_EQUAL(1, result);
-}
-
-void test_read_end_given_escape_code_224_ascii_code_19_should_return_0()
-{
-	int result;
-	result = read_end(224, 19);
-	TEST_ASSERT_EQUAL(0, result);
-}
-
-
-
-// testing for enter key
-void test_read_enter_given_escape_code_and_ascii_code_both_are_key_enter_should_return_1()
-{
-	int result;
-	result = read_enter(key_enter, key_enter);
-	TEST_ASSERT_EQUAL(1, result);
-}
-
-
-
-// testing for backspace key
-void test_read_backspace_given_escape_code_and_ascii_code_both_are_key_backspace_should_return_1()
-{
-	int result;
-	result = read_backspace(key_backspace, key_backspace);
-	TEST_ASSERT_EQUAL(1, result);
-}
-
-
-
-void test_getKeyAndStore_give_abc_when_arrow_up_being_pressed_it_will_save_into_buffer_and_return_key_code_for_arrow_up()
-{
-	int key_return;  // the variable which will get the code which consists of escape and ascii code
-	char *buffer;	// this is the temporary buffer where will save the input given by user
-	buffer = malloc(sizeof(char)*1024);
+	int return_value;  
 		
 	//mock
+	get_character_ExpectAndReturn('1');
+	
+	//run
+	return_value = get_key_press();
+	TEST_ASSERT_EQUAL(49, return_value);
+}
+
+
+
+
+void test_is_special_key_given_escape_key_should_return_CODE_ESCAPE()
+{
+	int return_value;  		// to get the return from get_key_press function
+	int status;				// to get the return from is_special_key function
+		
+	//mock
+	get_character_ExpectAndReturn(KEY_ESCAPE);
+	
+	//run
+	return_value = get_key_press();
+	status = is_special_key(return_value);
+	TEST_ASSERT_EQUAL( CODE_ESCAPE , status);
+}
+
+
+
+void test_is_special_key_given_arrow_up_should_return_CODE_ARROWUP()
+{
+	int return_value;  		// to get the return from get_key_press function
+	int status;				// to get the return from is_special_key function
+		
+	//mock
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_UP);
+	
+	//run
+	return_value = get_key_press();
+	status = is_special_key(return_value);
+	TEST_ASSERT_EQUAL( CODE_ARROWUP , status);
+}
+
+
+void test_is_special_key_given_b_should_return_0()
+{
+	int return_value;  		// to get the return from get_key_press function
+	int status;				// to get the return from is_special_key function
+		
+	//mock
+	get_character_ExpectAndReturn('b');
+	
+	//run
+	return_value = get_key_press();
+	status = is_special_key(return_value);
+	TEST_ASSERT_EQUAL( 0 , status);
+}
+
+void test_user_input_interface_given_abc_and_enter_buffer_should_get_abc()
+{
+	int key_return;  // the variable which will get the code which consists of escape and ascii code
+	
+	// mock
 	get_character_ExpectAndReturn('a');
 	put_character_Expect('a');
 	get_character_ExpectAndReturn('b');
 	put_character_Expect('b');
 	get_character_ExpectAndReturn('c');
 	put_character_Expect('c');
-	get_character_ExpectAndReturn(escapecode2);
-	get_character_ExpectAndReturn(arrow_up);
+	get_character_ExpectAndReturn(KEY_ENTER);
 	
-	//run
-	key_return = get_key_and_store(buffer);
+	// run
+	key_return = user_input_interface();
 	TEST_ASSERT_EQUAL_STRING("abc", buffer);
-	TEST_ASSERT_EQUAL( (escapecode2<<8)|arrow_up , key_return); 
-}
-
-
-void test_getKeyAndStore_give_1_add_2_when_del_being_pressed_it_will_save_into_buffer_and_return_key_code_for_del()
-{
-	int key_return;  // the variable which will get the code which consists of escape and ascii code
-	char *buffer;	// this is the temporary buffer where will save the input given by user
-	buffer = malloc(sizeof(char)*1024);
-		
-	//mock
-	get_character_ExpectAndReturn('1');
-	put_character_Expect('1');
-	get_character_ExpectAndReturn('+');
-	put_character_Expect('+');
-	get_character_ExpectAndReturn('2');
-	put_character_Expect('2');
-	get_character_ExpectAndReturn(escapecode2);
-	get_character_ExpectAndReturn(key_delete);
-	
-	//run
-	key_return = get_key_and_store(buffer);
-	TEST_ASSERT_EQUAL_STRING("1+2", buffer);
-	TEST_ASSERT_EQUAL( (escapecode2<<8)|key_delete , key_return); 
+	TEST_ASSERT_EQUAL( CODE_ENTER, key_return); 
 }
 
 
 
-void test_getKeyAndStore_give_1_add_2_mul_4_divide_3_when_enter_being_pressed_it_will_save_into_buffer_and_return_key_code_for_enter()
-{
-	int key_return;  // the variable which will get the code which consists of escape and ascii code
-	char *buffer;	// this is the temporary buffer where will save the input given by user
-	buffer = malloc(sizeof(char)*1024);
-		
-	//mock
-	get_character_ExpectAndReturn('1');
-	put_character_Expect('1');
-	get_character_ExpectAndReturn('+');
-	put_character_Expect('+');
-	get_character_ExpectAndReturn('2');
-	put_character_Expect('2');
-	get_character_ExpectAndReturn('*');
-	put_character_Expect('*');
-	get_character_ExpectAndReturn('4');
-	put_character_Expect('4');
-	get_character_ExpectAndReturn('/');
-	put_character_Expect('/');
-	get_character_ExpectAndReturn('3');
-	put_character_Expect('3');
-	get_character_ExpectAndReturn(key_enter);
-	
-	//run
-	key_return = get_key_and_store(buffer);
-	TEST_ASSERT_EQUAL_STRING("1+2*4/3", buffer);
-	TEST_ASSERT_EQUAL( (key_enter<<8)|key_enter , key_return); 
-}
-
-
-
-void test_backspace()
-{
-	char *buffer = "abcdef";
-	
-	backspace(buffer);
-	
-	printf("%s", buffer);
-}
-
-
-
-
-// void test_string_given_abc_should_return_ab_after_backspace_is_entered(void)
+// void test_backspace_given_abcdef_should_get_abcde()
 // {
-	// CircularBuffer *cb = circularBufferNew(length_of_buffer);
-	// CircularBufferAdd(cb,"abc");
-	// CircularBufferAdd(cb,"xyz");
-	// CircularBufferAdd(cb,"gg");
-	// printf("buffer = %c \n", *(cb->buffer--));
-	// printf("buffer = %c \n", *(cb->buffer--));
-	// printf("buffer = %c \n", *(cb->buffer--));
+	// char *buffer = "abcdef";
+	// backspace(buffer);
 // }
+
+
+
