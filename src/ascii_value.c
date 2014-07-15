@@ -1,79 +1,131 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <malloc.h>
-#include <string.h>
 #include "get_ch.c"
 #include "putch.c"
-#define arrow_up 			  72		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define arrow_down  		  80		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define arrow_left 			  75		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define arrow_right 		  77		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define key_delete  		  83		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define key_insert 	 		  82		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define key_pageup  		  73		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define key_pagedown 		  81		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define key_home 			  71		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define key_end 			  79		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define key_enter			  13		// this is not a special key, only give 1 byte which is 13
-#define key_backspace	 	   8		// this is not a special key, only give 1 byte which is 8
-#define size_temp_buffer 	1024		// size of the temp_buffer is 1024 bytes
-#define escapecode1			   0	
-#define escapecode2			 224	
+#include "command_prompt.h"
+
+
 
 typedef int Keycode;
 
 
-Keycode get_key_and_store(char *temp_buffer);
-void backspace(char *string);
+void handle_BACKSPACE();
 
 
 void main()
 {
-	int keycode;
-	// buffer = malloc(sizeof(char)*1024);
+	int key;
 	
-	
-	char *buffer = "abcdef";
-	printf("%s\b",buffer);
-	// keycode = get_key_and_store(buffer);
-	
-	// if(keycode == 0x0808)
-		// backspace(buffer);
-	
+	do{
+	key = user_input_interface();
+	check_special_keys(key);
+	}while(key!= CODE_ENTER);
 
-	// printf("buffer is %s  \n", buffer); 
 	system("pause");
-	
+}
+
+
+
+/*  To perform backspace
+ * 			
+ */
+void handle_BACKSPACE()
+{
+	int i=0 , length=0;
+
+	while ( buffer[i] != '\0')
+	{
+		length++;
+		i++;
+	}
+	buffer[length-1] = '\0';
+	system("CLS");
+	printf("%s \n", buffer);	
 }
 
 
 
 
-Keycode get_key_and_store(char *temp_buffer)
+
+/*  To check for the input is special key or not
+ *	Input  :
+ *			 key_code is the ascii code of the input
+ *  Return :
+ *			 modified key_code of the input will be return
+ * 			 modified key_code will be in 2 bytes format
+ */
+Keycode is_special_key(int key_code)
 {
-	int   key_code , upper_byte , lower_byte;
-		
-	printf("Enter your expression : ");
-	while(1)
-	{
-		key_code = get_character();
-		if ( key_code == escapecode1 || key_code == escapecode2)
+	int upper_byte , lower_byte;
+	
+	if ( key_code == ESCAPECODE1 || key_code == ESCAPECODE2)
 		{
 			upper_byte = (key_code<<8);
 			lower_byte = get_character();
 			key_code = (upper_byte|lower_byte);
-			return key_code;
+			if ( key_code != CODE_ARROWUP && key_code != CODE_ARROWDOWN && key_code != CODE_ARROWLEFT && key_code != CODE_ARROWRIGHT && 
+				 key_code != CODE_DELETE1 && key_code != CODE_DELETE2 && key_code != CODE_INSERT1 && key_code != CODE_INSERT2 && 
+				 key_code != CODE_PAGEUP1 && key_code != CODE_PAGEUP2 && key_code != CODE_PAGEDOWN1 && key_code != CODE_PAGEDOWN2)
+				return 0;
+			else	
+				return key_code;
 		}
-		else if( key_code == key_enter || key_code == key_backspace)
+	else if( key_code == KEY_ENTER || key_code == KEY_BACKSPACE || key_code == KEY_ESCAPE)
 		{
+			upper_byte = (NORMALCODE<<8);
 			lower_byte = key_code;
-			upper_byte = (key_code<<8);
 			key_code = (upper_byte|lower_byte);
 			return key_code;
 		}
-		*temp_buffer = key_code;
-		put_character(*temp_buffer);
-		temp_buffer++;
+	else
+		return 0;
+}
+
+
+
+
+
+/*  To get a single input
+ *  Return :
+ *			 ascii code of the input will be return
+ * 			
+ */
+Keycode get_key_press()
+{
+	int	  key_code;  
+		
+	key_code = get_character();
+	return key_code;
+}
+
+
+
+void check_special_keys(int key_code)
+{
+	if ( key_code == CODE_BACKSPACE)
+		handle_BACKSPACE();
+}
+
+
+/*  Get an string input store inside a buffer and display it on screen, stop when special key is entered 
+ *  Return :
+ *			 key code of the input will be return
+ * 			
+ */
+Keycode user_input_interface()
+{
+	int status;
+	int key_code;
+	int i=0;
+	
+	while(1)
+	{
+		key_code = get_key_press();
+		status = is_special_key(key_code);
+		if (status != 0)		// status !=0 means special character input
+			break;
+		buffer[i] = key_code;
+		put_character(buffer[i]);
+		i++;
 	}
 }
 
@@ -106,14 +158,3 @@ void get_ascii_code()
 }
 
 
-void backspace(char *string)
-{
-	int buffer_length;
-	char *test_string;
-	buffer_length = strlen(string);
-	
-	printf("length is %i", buffer_length);
-	strncpy ( test_string, string, 2 );
-	printf("buffer is %s  \n", string);
-	// printf("\b");
-}

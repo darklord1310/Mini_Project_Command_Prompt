@@ -1,9 +1,9 @@
 #include "command_prompt.h"
 #include <stdio.h>
 #include <malloc.h>
-#include "circularbuffer.h"
 #include "get_ch.h"
 #include "putch.h"
+
 
 
 
@@ -23,7 +23,12 @@ Keycode is_special_key(int key_code)
 			upper_byte = (key_code<<8);
 			lower_byte = get_character();
 			key_code = (upper_byte|lower_byte);
-			return key_code;
+			if ( key_code != CODE_ARROWUP && key_code != CODE_ARROWDOWN && key_code != CODE_ARROWLEFT && key_code != CODE_ARROWRIGHT && 
+				 key_code != CODE_DELETE1 && key_code != CODE_DELETE2 && key_code != CODE_INSERT1 && key_code != CODE_INSERT2 && 
+				 key_code != CODE_PAGEUP1 && key_code != CODE_PAGEUP2 && key_code != CODE_PAGEDOWN1 && key_code != CODE_PAGEDOWN2)
+				return 0;
+			else	
+				return key_code;
 		}
 	else if( key_code == KEY_ENTER || key_code == KEY_BACKSPACE || key_code == KEY_ESCAPE)
 		{
@@ -84,88 +89,80 @@ void check_special_keys(int key_code)
 	{
 		case (CODE_ARROWUP):
 				handle_ARROWUP();
+				break;
 		
 		case (CODE_ARROWDOWN):
 				handle_ARROWDOWN();
+				break;
 		
 		case (CODE_ARROWLEFT):
 				handle_ARROWLEFT();
+				break;
 		
 		case (CODE_ARROWRIGHT):
 				handle_ARROWRIGHT();
+				break;
 		
 		case (CODE_HOME1):
 				handle_HOME();
+				break;
 		
 		case (CODE_HOME2):
 				handle_HOME();
+				break;
 				
 		case (CODE_DELETE1):
 				handle_DEL();
+				break;
 				
 		case (CODE_DELETE2):
 				handle_DEL();
+				break;
 		
 		case (CODE_PAGEUP1):
 				handle_PAGEUP();
+				break;
 		
 		case (CODE_PAGEUP2):
 				handle_PAGEUP();
+				break;
 		
 		case (CODE_PAGEDOWN1):
 				handle_PAGEDOWN();
+				break;
 		
 		case (CODE_PAGEDOWN2):
 				handle_PAGEDOWN();
+				break;
 		
 		case (CODE_INSERT1):
 				handle_INSERT();
+				break;
 		
 		case (CODE_INSERT2):
 				handle_INSERT();
+				break;
 				
 		case (CODE_END1):
 				handle_END();
+				break;
 		
 		case (CODE_END2):
 				handle_END();
+				break;
 				
 		case (CODE_ENTER):
 				handle_ENTER();
+				break;
+		
+		case (CODE_ESCAPE):
+				handle_ESCAPE();
+				break;
 	}
 	
 }
 	
-	
-	
 
 
 
-
-
-
-
-
-/*  To perform backspace
- *  Input :     
- * 			string is a pointer that will point to a buffer of character
- *
- */
-// void backspace(char *string)
-// {
-	// int buffer_length;
-	// char *temp_string ;
-	// printf("%p \n", string);
-	// printf("%p \n", temp_string);
-	// temp_string = malloc(sizeof(char)*1024);
-	// buffer_length = strlen(string);
-	// strncpy(temp_string, string, (buffer_length-1));
-	// temp_string[buffer_length-1] = '\0';
-
-	// printf("%s \n",temp_string);
-	// printf("%s \n",string);
-	
-	// printf("%s\b",string);
-
-// }
 

@@ -42,7 +42,6 @@ typedef int Keycode;
 char buffer[MAX_BUFFER_SIZE];
 
 
-
 /*
 \a (alert) Produces an audible or visible alert. The active
 		   position shall not be changed.
@@ -80,18 +79,6 @@ Keycode get_key_press();  				   // get key press
 Keycode is_special_key(int key_code);	   // check whether input is special key or not
 Keycode user_input_interface();
 void check_special_keys(int key_code);
-void handle_BACKSPACE();
-void handle_ARROWUP();
-void handle_ARROWDOWN();
-void handle_ARROWLEFT();
-void handle_ARROWRIGHT();
-void handle_HOME();
-void handle_DEL();
-void handle_PAGEUP();
-void handle_PAGEDOWN();
-void handle_INSERT();
-void handle_END();
-void handle_ENTER();
 void dumpBuffer();
 
 /* some notes about mini project

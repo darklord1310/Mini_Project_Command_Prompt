@@ -1,10 +1,10 @@
 #include "unity.h"
 #include "command_prompt.h"
-#include "circularbuffer.h"
 #include <stdio.h>
 #include <malloc.h>
 #include "mock_get_ch.h"
 #include "mock_putch.h"
+#include "mock_handle_special_keys.h"
 #define length_of_buffer 250
 
 void setUp(void)
@@ -96,6 +96,47 @@ void test_user_input_interface_given_abc_and_enter_buffer_should_get_abc()
 	TEST_ASSERT_EQUAL( CODE_ENTER, key_return); 
 }
 
+
+void test_check_special_keys_given_arrowup_should_call_function_handle_ARROWUP()
+{
+	//mock
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_UP);
+	handle_ARROWUP_Expect();
+
+
+	//run	
+	int key = user_input_interface();
+	check_special_keys(key);
+}
+
+
+void test_check_special_keys_given_arrowdown_should_call_function_handle_ARROWDOWN()
+{
+	//mock
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_DOWN);
+	handle_ARROWDOWN_Expect();
+
+
+	//run	
+	int key = user_input_interface();
+	check_special_keys(key);
+}
+
+
+void test_check_special_keys_given_arrowright_should_call_function_handle_ARROWRIGHT()
+{
+	//mock
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_RIGHT);
+	handle_ARROWRIGHT_Expect();
+
+
+	//run	
+	int key = user_input_interface();
+	check_special_keys(key);
+}
 
 
 // void test_backspace_given_abcdef_should_get_abcde()
