@@ -1,10 +1,12 @@
 #include "command_prompt.h"
+#include "history_buffer.h"
 #include <stdio.h>
 #include <malloc.h>
 #include "get_ch.h"
 #include "putch.h"
 
 
+char temp_buffer[MAX_BUFFER_SIZE];
 
 
 /*  To check for the input is special key or not
@@ -42,7 +44,9 @@ Keycode is_special_key(int key_code)
 }
 
 
-/*  To get a single input
+
+
+/*  To get a single key input
  *  Return :
  *			 ascii code of the input will be return
  * 			
@@ -58,7 +62,7 @@ Keycode get_key_press()
 
 
 
-/*  Get an string input store inside a buffer and display it on screen, stop when special key is entered 
+/*  Get a string input store it inside a buffer and display it on screen, stop when special key is entered 
  *  Return :
  *			 key code of the input will be return
  * 			
@@ -75,94 +79,194 @@ Keycode user_input_interface()
 		status = is_special_key(key_code);
 		if (status != 0)		// status !=0 means special character input
 			break;
-		buffer[i] = key_code;
-		put_character(buffer[i]);
+		temp_buffer[i] = key_code;
+		put_character(temp_buffer[i]);
 		i++;
 	}
 }
 
 
 
-void check_special_keys(int key_code)
+// void check_special_keys(int key_code)
+// {
+	// switch ( key_code)
+	// {
+		// case (CODE_ARROWUP):
+				// handle_ARROWUP();
+				// break;
+		
+		// case (CODE_ARROWDOWN):
+				// handle_ARROWDOWN();
+				// break;
+		
+		// case (CODE_ARROWLEFT):
+				// handle_ARROWLEFT();
+				// break;
+		
+		// case (CODE_ARROWRIGHT):
+				// handle_ARROWRIGHT();
+				// break;
+		
+		// case (CODE_HOME1):
+				// handle_HOME();
+				// break;
+		
+		// case (CODE_HOME2):
+				// handle_HOME();
+				// break;
+				
+		// case (CODE_DELETE1):
+				// handle_DEL();
+				// break;
+				
+		// case (CODE_DELETE2):
+				// handle_DEL();
+				// break;
+		
+		// case (CODE_PAGEUP1):
+				// handle_PAGEUP();
+				// break;
+		
+		// case (CODE_PAGEUP2):
+				// handle_PAGEUP();
+				// break;
+		
+		// case (CODE_PAGEDOWN1):
+				// handle_PAGEDOWN();
+				// break;
+		
+		// case (CODE_PAGEDOWN2):
+				// handle_PAGEDOWN();
+				// break;
+		
+		// case (CODE_INSERT1):
+				// handle_INSERT();
+				// break;
+		
+		// case (CODE_INSERT2):
+				// handle_INSERT();
+				// break;
+				
+		// case (CODE_END1):
+				// handle_END();
+				// break;
+		
+		// case (CODE_END2):
+				// handle_END();
+				// break;
+				
+		// case (CODE_ENTER):
+				// handle_ENTER();
+				// break;
+		
+		// case (CODE_ESCAPE):
+				// handle_ESCAPE();
+				// break;
+	// }
+	
+// }
+
+
+
+
+
+/*This is the function exactly similar to check_special_keys, except
+ *this is for mocking purpose
+ */
+void mockspecialkeys(int key_code)
 {
 	switch ( key_code)
 	{
 		case (CODE_ARROWUP):
-				handle_ARROWUP();
+				mockARROWUP();
 				break;
 		
 		case (CODE_ARROWDOWN):
-				handle_ARROWDOWN();
+				mockARROWDOWN();
 				break;
 		
 		case (CODE_ARROWLEFT):
-				handle_ARROWLEFT();
+				mockARROWLEFT();
 				break;
 		
 		case (CODE_ARROWRIGHT):
-				handle_ARROWRIGHT();
+				mockARROWRIGHT();
 				break;
 		
 		case (CODE_HOME1):
-				handle_HOME();
+				mockHOME();
 				break;
 		
 		case (CODE_HOME2):
-				handle_HOME();
+				mockHOME();
 				break;
 				
 		case (CODE_DELETE1):
-				handle_DEL();
+				mockDEL();
 				break;
 				
 		case (CODE_DELETE2):
-				handle_DEL();
+				mockDEL();
 				break;
 		
 		case (CODE_PAGEUP1):
-				handle_PAGEUP();
+				mockPAGEUP();
 				break;
 		
 		case (CODE_PAGEUP2):
-				handle_PAGEUP();
+				mockPAGEUP();
 				break;
 		
 		case (CODE_PAGEDOWN1):
-				handle_PAGEDOWN();
+				mockPAGEDOWN();
 				break;
 		
 		case (CODE_PAGEDOWN2):
-				handle_PAGEDOWN();
+				mockPAGEDOWN();
 				break;
 		
 		case (CODE_INSERT1):
-				handle_INSERT();
+				mockINSERT();
 				break;
 		
 		case (CODE_INSERT2):
-				handle_INSERT();
+				mockINSERT();
 				break;
 				
 		case (CODE_END1):
-				handle_END();
+				mockEND();
 				break;
 		
 		case (CODE_END2):
-				handle_END();
+				mockEND();
 				break;
 				
 		case (CODE_ENTER):
-				handle_ENTER();
+				mockENTER();
 				break;
 		
 		case (CODE_ESCAPE):
-				handle_ESCAPE();
+				mockESCAPE();
 				break;
 	}
 	
 }
 	
+/*  To perform backspace
+ * 			
+ */
+void handle_BACKSPACE()
+{
+	int i=0 , length=0;
 
+	while ( temp_buffer[i] != '\0')
+	{
+		length++;
+		i++;
+	}
+	temp_buffer[length-1] = '\0';
+	
+}
 
 
 

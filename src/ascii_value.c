@@ -5,10 +5,6 @@
 
 
 
-typedef int Keycode;
-
-
-void handle_BACKSPACE();
 
 
 void main()
@@ -21,25 +17,6 @@ void main()
 	}while(key!= CODE_ENTER);
 
 	system("pause");
-}
-
-
-
-/*  To perform backspace
- * 			
- */
-void handle_BACKSPACE()
-{
-	int i=0 , length=0;
-
-	while ( buffer[i] != '\0')
-	{
-		length++;
-		i++;
-	}
-	buffer[length-1] = '\0';
-	system("CLS");
-	printf("%s \n", buffer);	
 }
 
 
@@ -99,14 +76,7 @@ Keycode get_key_press()
 
 
 
-void check_special_keys(int key_code)
-{
-	if ( key_code == CODE_BACKSPACE)
-		handle_BACKSPACE();
-}
-
-
-/*  Get an string input store inside a buffer and display it on screen, stop when special key is entered 
+/*  Get an string input store inside a temp_buffer and display it on screen, stop when special key is entered 
  *  Return :
  *			 key code of the input will be return
  * 			
@@ -123,8 +93,8 @@ Keycode user_input_interface()
 		status = is_special_key(key_code);
 		if (status != 0)		// status !=0 means special character input
 			break;
-		buffer[i] = key_code;
-		put_character(buffer[i]);
+		temp_buffer[i] = key_code;
+		put_character(temp_buffer[i]);
 		i++;
 	}
 }

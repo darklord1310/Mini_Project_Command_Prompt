@@ -1,11 +1,11 @@
 #include "unity.h"
 #include "command_prompt.h"
+#include "history_buffer.h"
 #include <stdio.h>
 #include <malloc.h>
 #include "mock_get_ch.h"
 #include "mock_putch.h"
-#include "mock_handle_special_keys.h"
-#define length_of_buffer 250
+#include "mock_mockspecial_keys.h"
 
 void setUp(void)
 {
@@ -16,6 +16,7 @@ void tearDown(void)
 }
 
 
+// when press 1 will return 49 because 49 is the ascii code for number 1
 void test_get_key_press_given_1_should_return_49()
 {
 	int return_value;  
@@ -63,6 +64,7 @@ void test_is_special_key_given_arrow_up_should_return_CODE_ARROWUP()
 }
 
 
+// b is not a special key so will return 0
 void test_is_special_key_given_b_should_return_0()
 {
 	int return_value;  		// to get the return from get_key_press function
@@ -77,6 +79,9 @@ void test_is_special_key_given_b_should_return_0()
 	TEST_ASSERT_EQUAL( 0 , status);
 }
 
+
+
+//when special key is not pressed, it will jump out from getting input from user, hence buffer stop at the last input
 void test_user_input_interface_given_abc_and_enter_buffer_should_get_abc()
 {
 	int key_return;  // the variable which will get the code which consists of escape and ascii code
@@ -92,58 +97,95 @@ void test_user_input_interface_given_abc_and_enter_buffer_should_get_abc()
 	
 	// run
 	key_return = user_input_interface();
-	TEST_ASSERT_EQUAL_STRING("abc", buffer);
+	TEST_ASSERT_EQUAL_STRING("abc", temp_buffer);
 	TEST_ASSERT_EQUAL( CODE_ENTER, key_return); 
 }
 
 
-void test_check_special_keys_given_arrowup_should_call_function_handle_ARROWUP()
+
+
+
+void test_mockspecialkeys_given_arrowup_should_call_function_mockARROWUP()
 {
 	//mock
 	get_character_ExpectAndReturn(ESCAPECODE2);
 	get_character_ExpectAndReturn(ARROW_UP);
-	handle_ARROWUP_Expect();
+	mockARROWUP_Expect();
 
 
 	//run	
 	int key = user_input_interface();
-	check_special_keys(key);
+	mockspecialkeys(key);
 }
 
 
-void test_check_special_keys_given_arrowdown_should_call_function_handle_ARROWDOWN()
+void test_mockspecialkeys_given_arrowdown_should_call_function_mockARROWDOWN()
 {
 	//mock
 	get_character_ExpectAndReturn(ESCAPECODE2);
 	get_character_ExpectAndReturn(ARROW_DOWN);
-	handle_ARROWDOWN_Expect();
+	mockARROWDOWN_Expect();
 
 
 	//run	
 	int key = user_input_interface();
-	check_special_keys(key);
+	mockspecialkeys(key);
 }
 
 
-void test_check_special_keys_given_arrowright_should_call_function_handle_ARROWRIGHT()
+void test_mockspecialkeys_given_arrowright_should_call_function_mockARROWRIGHT()
 {
 	//mock
 	get_character_ExpectAndReturn(ESCAPECODE2);
 	get_character_ExpectAndReturn(ARROW_RIGHT);
-	handle_ARROWRIGHT_Expect();
+	mockARROWRIGHT_Expect();
 
 
 	//run	
 	int key = user_input_interface();
-	check_special_keys(key);
+	mockspecialkeys(key);
 }
 
 
-// void test_backspace_given_abcdef_should_get_abcde()
-// {
-	// char *buffer = "abcdef";
-	// backspace(buffer);
-// }
+void test_mockspecialkeys_given_arrowleft_should_call_function_mockARROWLEFT()
+{
+	//mock
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_LEFT);
+	mockARROWLEFT_Expect();
+
+
+	//run	
+	int key = user_input_interface();
+	mockspecialkeys(key);
+}
+
+
+
+// to test the handle backspace function
+void test_handle_BACKSPACE_given_abcdef_should_get_abcde()
+{
+	int key_return;  // the variable which will get the code which consists of escape and ascii code
+	
+	// mock
+	get_character_ExpectAndReturn('a');
+	put_character_Expect('a');
+	get_character_ExpectAndReturn('b');
+	put_character_Expect('b');
+	get_character_ExpectAndReturn('c');
+	put_character_Expect('c');
+	get_character_ExpectAndReturn('d');
+	put_character_Expect('d');
+	get_character_ExpectAndReturn('e');
+	put_character_Expect('e');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	
+	// run
+	key_return = user_input_interface();
+	TEST_ASSERT_EQUAL_STRING("abcde", temp_buffer);
+	handle_BACKSPACE();
+	TEST_ASSERT_EQUAL_STRING("abcd", temp_buffer);
+}
 
 
 
