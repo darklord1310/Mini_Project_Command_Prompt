@@ -39,6 +39,7 @@
 
 typedef int Keycode;
 
+
 extern char temp_buffer[MAX_BUFFER_SIZE];
 
 
@@ -94,6 +95,7 @@ void handle_INSERT();
 void handle_END();
 void handle_ENTER();
 void handle_ESCAPE();
+
 
 /* some notes about mini project
  *  - need to modified the circular buffer, will have 2 pointer which are current and head

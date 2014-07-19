@@ -162,6 +162,8 @@ void test_mockspecialkeys_given_arrowleft_should_call_function_mockARROWLEFT()
 
 
 
+
+
 // to test the handle backspace function
 void test_handle_BACKSPACE_given_abcdef_should_get_abcde()
 {
@@ -178,7 +180,7 @@ void test_handle_BACKSPACE_given_abcdef_should_get_abcde()
 	put_character_Expect('d');
 	get_character_ExpectAndReturn('e');
 	put_character_Expect('e');
-	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn(KEY_ENTER); //it dont matter what key is pass into the function, it just use to get out from the function
 	
 	// run
 	key_return = user_input_interface();
@@ -186,6 +188,38 @@ void test_handle_BACKSPACE_given_abcdef_should_get_abcde()
 	handle_BACKSPACE();
 	TEST_ASSERT_EQUAL_STRING("abcd", temp_buffer);
 }
+
+
+
+
+
+void test_handle_BACKSPACE_twice_given_abcde_should_get_abc()
+{
+	int key_return;  // the variable which will get the code which consists of escape and ascii code
+	
+	// mock
+	get_character_ExpectAndReturn('a');
+	put_character_Expect('a');
+	get_character_ExpectAndReturn('b');
+	put_character_Expect('b');
+	get_character_ExpectAndReturn('c');
+	put_character_Expect('c');
+	get_character_ExpectAndReturn('d');
+	put_character_Expect('d');
+	get_character_ExpectAndReturn('e');
+	put_character_Expect('e');
+	get_character_ExpectAndReturn(KEY_ENTER);	//it dont matter what key is pass into the function, it just use to get out from the function
+	
+	// run
+	key_return = user_input_interface();
+	TEST_ASSERT_EQUAL_STRING("abcde", temp_buffer);
+	handle_BACKSPACE();
+	TEST_ASSERT_EQUAL_STRING("abcd", temp_buffer);
+	handle_BACKSPACE();
+	TEST_ASSERT_EQUAL_STRING("abc", temp_buffer);
+}
+
+
 
 
 

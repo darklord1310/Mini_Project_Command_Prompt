@@ -3,9 +3,12 @@
 #define LENGTH_OF_BUFFER 4
 
 
-typedef enum {ERR_NO_ERROR, ERR_BUFFER_IS_FULL, ERR_BUFFER_IS_EMPTY}ErrorCode;
+
+typedef enum {ERR_NO_MORE_PREVIOUS, ERR_NO_MORE_NEXT}ErrorCode;
 
 typedef struct { char string[1024]; } String;
+
+extern int temp_size;
 
 
 typedef struct
@@ -16,7 +19,9 @@ typedef struct
 	int size;		//size is the size allocated for each element
 	int length;		//length is the length of the history where the buffer could remember
 	char *buffer;
-	int loop;		
+	char *read;
+	char *endofsize;
+	int loop;	
 	
 }HistoryBuffer;
 
@@ -24,7 +29,7 @@ typedef struct
 HistoryBuffer *historyBufferNew(int length);
 void historyBufferDel(HistoryBuffer *hb);
 void historyBufferAdd(HistoryBuffer *hb, char stringtoadd[]);
-
+char *historyBufferReadPrevious(HistoryBuffer *hb);
 
 
 #endif // history_buffer_H

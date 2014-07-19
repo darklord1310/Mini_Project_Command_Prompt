@@ -3,7 +3,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <CException.h>
 
+
+int temp_size;
 
 /*
  * Initialize the historybuffer
@@ -35,7 +38,6 @@ void historyBufferDel(HistoryBuffer *hb)
 
 
 
-
 /*
  * Add a new value into the history buffer
  *
@@ -54,6 +56,7 @@ void historyBufferAdd(HistoryBuffer *hb, char stringtoadd[])
 	}
 	else if (hb->size == hb->length)
 	{
+		hb->endofsize = hb->buffer;
 		hb->latest = hb->initial;
 		strcpy(hb->latest,stringtoadd);
 		hb->size = 1;
@@ -82,7 +85,40 @@ void historyBufferAdd(HistoryBuffer *hb, char stringtoadd[])
 		hb->latest = hb->buffer;
 		hb->size++;
 	}
+
+	 hb->read = hb->latest;
+	 temp_size = hb->size;
 }
 
 
+
+
+
+
+
+/*
+ * Return the previous string in history buffer 
+ *
+ *Input :
+ *					Pointer hb is the pointer which pointed to the HistoryBuffer structure
+ *	
+ *Return :
+ *					The latest string that stored in the historyBuffer
+ *
+ */
+char *historyBufferReadPrevious(HistoryBuffer *hb)
+{
+	char *temp;
+	temp = hb->read;
+	
+		
+	if ( hb->loop == 0 && temp_size == 0)
+		Throw(ERR_NO_MORE_PREVIOUS);	
+	else
+	{
+		hb->read-=sizeof(String);
+		temp_size--;
+	}
+	return temp;
+}
 

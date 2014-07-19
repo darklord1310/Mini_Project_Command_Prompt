@@ -270,3 +270,20 @@ void handle_BACKSPACE()
 
 
 
+
+void handle_ENTER()
+{
+
+}
+
+
+
+
+
+
+void handle_ARROWRIGHT()
+{
+
+
+}
+

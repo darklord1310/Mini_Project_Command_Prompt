@@ -1,5 +1,6 @@
 #include "unity.h"
 #include "history_buffer.h"
+#include "CException.h"
 
 void setUp(void)
 {
@@ -289,4 +290,123 @@ void test_historyBufferAdd_given_1_2_3_4_22_33_55_66_abc_xyz_1plus3_2minus2_3tim
 	TEST_ASSERT_EQUAL_STRING("18", (hb->buffer - 3*sizeof(String)));
 
     historyBufferDel(hb);
+}
+
+
+
+
+
+void test_historyBufferRead_given_1plus6_should_return_1plus6_when_read_once()
+{
+	CEXCEPTION_T err;
+	
+	HistoryBuffer *hb = historyBufferNew(LENGTH_OF_BUFFER);
+
+	char string[] = "1+6";
+	
+	Try{
+	
+		historyBufferAdd(hb, string);
+		char *string_return = historyBufferReadPrevious(hb);
+		TEST_ASSERT_EQUAL_STRING(string , string_return);
+		
+	}Catch(err)
+	{
+		TEST_ASSERT_EQUAL(ERR_NO_MORE_PREVIOUS,err);
+		printf("Error is generated, no more previous");
+	}
+}
+
+
+
+
+void test_historyBufferRead_1plus6_2plus8_given_should_return_2plus8_1plus6_when_read_twice()
+{
+	CEXCEPTION_T err;
+	
+	HistoryBuffer *hb = historyBufferNew(LENGTH_OF_BUFFER);
+
+	char string1[] = "1+6";
+	char string2[] = "2+8";
+	char *string_return;
+	
+	Try{
+		
+		historyBufferAdd(hb, string1);
+		historyBufferAdd(hb, string2);
+		string_return = historyBufferReadPrevious(hb);
+		TEST_ASSERT_EQUAL_STRING(string2 , string_return);
+		string_return = historyBufferReadPrevious(hb);
+		TEST_ASSERT_EQUAL_STRING(string1 , string_return);
+		
+	}Catch(err)
+	{
+		TEST_ASSERT_EQUAL(ERR_NO_MORE_PREVIOUS,err);
+		TEST_FAIL_MESSAGE("Do not expect error to be generated");
+	}
+}
+
+
+
+void test_historyBufferRead_given_1plus6_2plus8_3plus4_and_size_is_3_should_return_3plus4_2plus8_1plus6_when_read_thrice()
+{
+	CEXCEPTION_T err;
+	
+	HistoryBuffer *hb = historyBufferNew(3);
+
+	char string1[] = "1+6";
+	char string2[] = "2+8";
+	char string3[] = "3+4";
+	char *string_return;
+	
+	Try{
+		
+		historyBufferAdd(hb, string1);
+		historyBufferAdd(hb, string2);
+		historyBufferAdd(hb, string3);
+		string_return = historyBufferReadPrevious(hb);
+		TEST_ASSERT_EQUAL_STRING(string3 , string_return);
+		string_return = historyBufferReadPrevious(hb);
+		TEST_ASSERT_EQUAL_STRING(string2 , string_return);
+		string_return = historyBufferReadPrevious(hb);
+		TEST_ASSERT_EQUAL_STRING(string1, string_return);
+		
+	}Catch(err)
+	{
+		TEST_ASSERT_EQUAL(ERR_NO_MORE_PREVIOUS,err);
+		TEST_FAIL_MESSAGE("Do not expect error to be generated");
+	}
+}
+
+
+
+void test_historyBufferRead_given_1plus6_2plus8_3plus4_3minus1_and_size_is_3_should_return_error_when_read_four_times()
+{
+	CEXCEPTION_T err;
+	
+	HistoryBuffer *hb = historyBufferNew(3);
+
+	char string1[] = "1+6";
+	char string2[] = "2+8";
+	char string3[] = "3+4";
+	char *string_return;
+	
+	Try{
+		
+		historyBufferAdd(hb, string1);
+		historyBufferAdd(hb, string2);
+		historyBufferAdd(hb, string3);
+		string_return = historyBufferReadPrevious(hb);
+		TEST_ASSERT_EQUAL_STRING(string3 , string_return);
+		string_return = historyBufferReadPrevious(hb);
+		TEST_ASSERT_EQUAL_STRING(string2 , string_return);
+		string_return = historyBufferReadPrevious(hb);
+		TEST_ASSERT_EQUAL_STRING(string1 , string_return);
+		string_return = historyBufferReadPrevious(hb);
+		
+	}Catch(err)
+	{
+		TEST_ASSERT_EQUAL(ERR_NO_MORE_PREVIOUS,err);
+		printf("Error generated : No more previous");
+	}
 }
