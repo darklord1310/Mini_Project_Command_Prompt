@@ -171,7 +171,7 @@ Keycode user_input_interface()
 
 
 /*This is the function exactly similar to check_special_keys, except
- *this is for mocking purpose
+ *this is only for mocking purpose
  */
 void mockspecialkeys(int key_code)
 {
@@ -270,14 +270,10 @@ void handle_BACKSPACE()
 
 
 
-
 void handle_ENTER()
 {
 
 }
-
-
-
 
 
 

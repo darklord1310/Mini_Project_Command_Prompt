@@ -7,6 +7,7 @@
 
 
 int temp_size;
+char *read;
 
 /*
  * Initialize the historybuffer
@@ -85,12 +86,10 @@ void historyBufferAdd(HistoryBuffer *hb, char stringtoadd[])
 		hb->latest = hb->buffer;
 		hb->size++;
 	}
-
-	 hb->read = hb->latest;
+	 
+	 read = hb->latest;
 	 temp_size = hb->size;
 }
-
-
 
 
 
@@ -105,20 +104,75 @@ void historyBufferAdd(HistoryBuffer *hb, char stringtoadd[])
  *Return :
  *					The latest string that stored in the historyBuffer
  *
+ *Error Checking:
+ *					will gives error when no more previous string
  */
 char *historyBufferReadPrevious(HistoryBuffer *hb)
 {
 	char *temp;
-	temp = hb->read;
+	int end_status;		// 1 will indicate no more previous
 	
-		
-	if ( hb->loop == 0 && temp_size == 0)
-		Throw(ERR_NO_MORE_PREVIOUS);	
+	temp = read;
+	
+	
+	if (	(end_status == 1) || (hb->loop == 0 && temp_size == 0) )
+		Throw(ERR_NO_MORE_PREVIOUS);
 	else
 	{
-		hb->read-=sizeof(String);
+		if(hb->loop != 0 && read == hb->end)
+			end_status = 1;
+			
+		if(hb->loop != 0 && temp_size == 0)
+		{
+			read = hb->endofsize;
+			temp = read;
+		}
+		read-=sizeof(String);
 		temp_size--;
 	}
 	return temp;
 }
 
+
+
+
+
+
+
+/*
+ * Return the next string in history buffer 
+ *
+ *Input :
+ *					Pointer hb is the pointer which pointed to the HistoryBuffer structure
+ *	
+ *Return :
+ *					The next string that stored in the historyBuffer
+ *
+ *Error Checking:
+ *					will gives error when no more next string
+ */
+char *historyBufferReadNext(HistoryBuffer *hb)
+{
+	char *temp;
+	int end_status;		// 1 will indicate no more previous
+	
+	temp = read;
+	
+	
+	if (	(end_status == 1) || (hb->loop == 0 && temp_size == hb->length) )
+		Throw(ERR_NO_MORE_NEXT);
+	else
+	{
+		// if(hb->loop != 0 && read == hb->end)
+			// end_status = 1;
+			
+		// if(hb->loop != 0 && temp_size == 0)
+		// {
+			// read = hb->endofsize;
+			// temp = read;
+		// }
+		read+=sizeof(String);
+		temp_size++;
+	}
+	return temp;
+}

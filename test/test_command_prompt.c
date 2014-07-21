@@ -192,7 +192,7 @@ void test_handle_BACKSPACE_given_abcdef_should_get_abcde()
 
 
 
-
+// to test the handle backspace function
 void test_handle_BACKSPACE_twice_given_abcde_should_get_abc()
 {
 	int key_return;  // the variable which will get the code which consists of escape and ascii code
@@ -218,6 +218,7 @@ void test_handle_BACKSPACE_twice_given_abcde_should_get_abc()
 	handle_BACKSPACE();
 	TEST_ASSERT_EQUAL_STRING("abc", temp_buffer);
 }
+
 
 
 

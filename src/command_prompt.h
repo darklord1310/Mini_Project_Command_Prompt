@@ -95,11 +95,7 @@ void handle_INSERT();
 void handle_END();
 void handle_ENTER();
 void handle_ESCAPE();
+void initialize_historybuffer(int length);
 
-
-/* some notes about mini project
- *  - need to modified the circular buffer, will have 2 pointer which are current and head
-	  no more tail pointer
- */
 
 #endif // command_prompt_H
