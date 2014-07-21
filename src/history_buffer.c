@@ -8,6 +8,9 @@
 
 int temp_size;
 char *read;
+char *move_read_ptr;
+int end_status = 0;	// 1 will indicate no more previous
+					// Remark: end_status must be manually clear once handleENTER function is executed
 
 /*
  * Initialize the historybuffer
@@ -62,14 +65,14 @@ void historyBufferAdd(HistoryBuffer *hb, char stringtoadd[])
 		strcpy(hb->latest,stringtoadd);
 		hb->size = 1;
 		hb->end+= sizeof(String);
-		hb->loop++;
+		hb->loop = 1;
 	}
 	else if( hb->loop >= 1)
 	{
 		hb->latest = hb->end;
 		strcpy(hb->latest,stringtoadd);
 			
-		if ( hb->size != 3)
+		if ( hb->size != hb->length-1)
 		{
 			hb->end+= sizeof(String);
 		}
@@ -87,7 +90,7 @@ void historyBufferAdd(HistoryBuffer *hb, char stringtoadd[])
 		hb->size++;
 	}
 	 
-	 read = hb->latest;
+	 move_read_ptr = hb->latest;
 	 temp_size = hb->size;
 }
 
@@ -109,28 +112,28 @@ void historyBufferAdd(HistoryBuffer *hb, char stringtoadd[])
  */
 char *historyBufferReadPrevious(HistoryBuffer *hb)
 {
-	char *temp;
-	int end_status;		// 1 will indicate no more previous
+	read = move_read_ptr;
 	
-	temp = read;
-	
-	
-	if (	(end_status == 1) || (hb->loop == 0 && temp_size == 0) )
+	if (	(end_status == 1) || (hb->loop == 0 && temp_size == 0) ||  (hb->size ==0 )	)
+	{
 		Throw(ERR_NO_MORE_PREVIOUS);
+	}
 	else
 	{
 		if(hb->loop != 0 && read == hb->end)
+		{
 			end_status = 1;
-			
+			return read;
+		}
 		if(hb->loop != 0 && temp_size == 0)
 		{
-			read = hb->endofsize;
-			temp = read;
+			move_read_ptr = hb->endofsize;
+			read = move_read_ptr;
 		}
-		read-=sizeof(String);
+		move_read_ptr-=sizeof(String);
 		temp_size--;
 	}
-	return temp;
+	return read;
 }
 
 
@@ -153,26 +156,17 @@ char *historyBufferReadPrevious(HistoryBuffer *hb)
  */
 char *historyBufferReadNext(HistoryBuffer *hb)
 {
-	char *temp;
-	int end_status;		// 1 will indicate no more previous
 	
-	temp = read;
-	
-	
-	if (	(end_status == 1) || (hb->loop == 0 && temp_size == hb->length) )
+	if (	(hb->loop == 0 && temp_size == hb->length) || (hb->size == 0)	)
+	{		
 		Throw(ERR_NO_MORE_NEXT);
+	}
 	else
 	{
-		// if(hb->loop != 0 && read == hb->end)
-			// end_status = 1;
-			
-		// if(hb->loop != 0 && temp_size == 0)
-		// {
-			// read = hb->endofsize;
-			// temp = read;
-		// }
 		read+=sizeof(String);
 		temp_size++;
 	}
-	return temp;
+	return read;
 }
+
+
