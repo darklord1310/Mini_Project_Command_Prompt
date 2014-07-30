@@ -11,7 +11,6 @@ typedef struct { char string[1024]; } String;
 extern int temp_size;
 extern char *read;
 extern char *move_read_ptr;
-extern int end_status;
 
 typedef struct
 {

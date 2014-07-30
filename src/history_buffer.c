@@ -9,8 +9,6 @@
 int temp_size;
 char *read;
 char *move_read_ptr;
-int end_status ;	// 1 will indicate no more previous
-					// Remark: end_status must be manually clear once handleENTER function is executed
 
 /*
  * Initialize the historybuffer
@@ -25,7 +23,7 @@ HistoryBuffer *historyBufferNew(int length)
 	historyBuffer = malloc(sizeof(HistoryBuffer));
 	historyBuffer->buffer = calloc(length, sizeof(String));
 	historyBuffer->length = length;
-	historyBuffer->size = 0;
+	historyBuffer->size = temp_size = 0;
 	historyBuffer->initial = historyBuffer->buffer;
 	historyBuffer->end = historyBuffer->buffer;
 	historyBuffer->loop =0;
@@ -112,7 +110,7 @@ void historyBufferAdd(HistoryBuffer *hb, char stringtoadd[])
  */
 char *historyBufferReadPrevious(HistoryBuffer *hb)
 {
-	if (	(end_status == 1) || (hb->loop == 0 && temp_size == 0) )
+	if (	( (hb->loop != 0) && (read == hb->end) && (move_read_ptr == hb->end) )      || 	( hb->loop == 0 && temp_size == 0)	)
 	{
 		Throw(ERR_NO_MORE_PREVIOUS);
 	}
@@ -120,19 +118,36 @@ char *historyBufferReadPrevious(HistoryBuffer *hb)
 	{
 		if(hb->loop != 0 && move_read_ptr == hb->end)
 		{
-			end_status = 1;
 			read = move_read_ptr;
 			return read;
 		}
-		if(hb->loop != 0 && temp_size == 0)
+		else if(hb->loop == 0 && (temp_size == hb->length - hb->length + 1)	)
+		{
+			read = move_read_ptr;
+			temp_size--;
+			return read;
+		}
+		else if (hb->loop != 0 && temp_size == 0)
 		{
 			move_read_ptr = hb->endofsize;
+			if( move_read_ptr == hb->end)
+			{
+				read = move_read_ptr;
+				return read;
+			}
 			temp_size = hb->length-1;
+			read = move_read_ptr;
+			move_read_ptr-=sizeof(String);
+			return read;
 		}
-		read = move_read_ptr;
-		move_read_ptr-=sizeof(String);
-		temp_size--;
+		else
+		{
+			read = move_read_ptr;
+			move_read_ptr-=sizeof(String);
+			temp_size--;
+		}
 	}
+	
 	return read;
 }
 
