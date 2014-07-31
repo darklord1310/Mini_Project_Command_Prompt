@@ -27,6 +27,8 @@ HistoryBuffer *historyBufferNew(int length)
 	historyBuffer->initial = historyBuffer->buffer;
 	historyBuffer->end = historyBuffer->buffer;
 	historyBuffer->loop =0;
+	read = NULL;		// initialize read pointer to NULL, if readprevious is not call first
+						// then readnext will not return anything
 	return historyBuffer;
 }
 
@@ -129,15 +131,16 @@ char *historyBufferReadPrevious(HistoryBuffer *hb)
 		}
 		else if (hb->loop != 0 && temp_size == 0)
 		{
-			move_read_ptr = hb->endofsize;
-			if( move_read_ptr == hb->end)
-			{
-				read = move_read_ptr;
-				return read;
-			}
-			temp_size = hb->length-1;
+			temp_size = hb->length;
 			read = move_read_ptr;
 			move_read_ptr-=sizeof(String);
+			return read;
+		}
+		else if (hb->loop != 0 && temp_size == 1)
+		{
+			read = move_read_ptr;
+			move_read_ptr = hb->endofsize;
+			temp_size--;
 			return read;
 		}
 		else
@@ -145,10 +148,9 @@ char *historyBufferReadPrevious(HistoryBuffer *hb)
 			read = move_read_ptr;
 			move_read_ptr-=sizeof(String);
 			temp_size--;
+			return read;
 		}
 	}
-	
-	return read;
 }
 
 
@@ -171,8 +173,9 @@ char *historyBufferReadPrevious(HistoryBuffer *hb)
  */
 char *historyBufferReadNext(HistoryBuffer *hb)
 {
+	char *temp_ptr;
 	
-	if ( (hb->loop == 0 && temp_size == hb->length) || (hb->size == 0)	||  (hb->loop!=0 && read == hb->initial)	)
+	if ( (hb->loop == 0 && temp_size == hb->length) || (hb->size == 0)	||  read == NULL)
 	{		
 		Throw(ERR_NO_MORE_NEXT);
 	}
@@ -181,12 +184,43 @@ char *historyBufferReadNext(HistoryBuffer *hb)
 		if( read == hb->endofsize)
 		{
 			read = hb->initial;
+			if ( move_read_ptr != hb->end)
+				move_read_ptr+=sizeof(String);
+			temp_size = 0;
 			return read;
 		}
-		read+=sizeof(String);
-		temp_size++;
+		else if( read == hb->latest)
+		{
+			move_read_ptr = hb->latest-=sizeof(String);
+			temp_size++;
+			temp_ptr = read;
+			read = NULL;
+			return temp_ptr;
+		}
+		else if ( read == hb->initial)
+		{
+			read+=sizeof(String);
+			move_read_ptr = hb->initial;
+			temp_size++;
+			return read;
+		}
+		else
+		{
+			read+=sizeof(String);
+			if ( read == hb->latest)
+			{
+				temp_ptr = read;
+				move_read_ptr = hb->latest+=sizeof(String);
+				temp_size++;
+				read = NULL;
+				return temp_ptr;
+			}
+			move_read_ptr+=sizeof(String);
+			temp_size++;
+			return read;
+		}
 	}
-	return read;
+	
 }
 
 
