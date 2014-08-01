@@ -8,7 +8,6 @@ typedef enum {ERR_NO_MORE_PREVIOUS, ERR_NO_MORE_NEXT}ErrorCode;
 
 typedef struct { char string[1024]; } String;
 
-extern int temp_size;
 extern char *read;
 extern char *move_read_ptr;
 

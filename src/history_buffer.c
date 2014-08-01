@@ -6,9 +6,9 @@
 #include <CException.h>
 
 
-int temp_size;
 char *read;
 char *move_read_ptr;
+
 
 /*
  * Initialize the historybuffer
@@ -23,7 +23,7 @@ HistoryBuffer *historyBufferNew(int length)
 	historyBuffer = malloc(sizeof(HistoryBuffer));
 	historyBuffer->buffer = calloc(length, sizeof(String));
 	historyBuffer->length = length;
-	historyBuffer->size = temp_size = 0;
+	historyBuffer->size = 0;
 	historyBuffer->initial = historyBuffer->buffer;
 	historyBuffer->end = historyBuffer->buffer;
 	historyBuffer->loop =0;
@@ -91,7 +91,6 @@ void historyBufferAdd(HistoryBuffer *hb, char stringtoadd[])
 	}
 	 
 	 move_read_ptr = hb->latest;
-	 temp_size = hb->size;
 }
 
 
@@ -112,42 +111,27 @@ void historyBufferAdd(HistoryBuffer *hb, char stringtoadd[])
  */
 char *historyBufferReadPrevious(HistoryBuffer *hb)
 {
-	if (	( (hb->loop != 0) && (read == hb->end) && (move_read_ptr == hb->end) )      || 	( hb->loop == 0 && temp_size == 0)	)
+	if (	((read == hb->end) && (move_read_ptr == hb->end))  ||  hb->size == 0   )
 	{
 		Throw(ERR_NO_MORE_PREVIOUS);
 	}
 	else
 	{
-		if(hb->loop != 0 && move_read_ptr == hb->end)
+		if(move_read_ptr == hb->end)
 		{
 			read = move_read_ptr;
 			return read;
 		}
-		else if(hb->loop == 0 && (temp_size == hb->length - hb->length + 1)	)
-		{
-			read = move_read_ptr;
-			temp_size--;
-			return read;
-		}
-		else if (hb->loop != 0 && temp_size == 0)
-		{
-			temp_size = hb->length;
-			read = move_read_ptr;
-			move_read_ptr-=sizeof(String);
-			return read;
-		}
-		else if (hb->loop != 0 && temp_size == 1)
+		else if (hb->loop != 0 && move_read_ptr == hb->initial)
 		{
 			read = move_read_ptr;
 			move_read_ptr = hb->endofsize;
-			temp_size--;
 			return read;
 		}
 		else
 		{
 			read = move_read_ptr;
 			move_read_ptr-=sizeof(String);
-			temp_size--;
 			return read;
 		}
 	}
@@ -173,9 +157,8 @@ char *historyBufferReadPrevious(HistoryBuffer *hb)
  */
 char *historyBufferReadNext(HistoryBuffer *hb)
 {
-	char *temp_ptr;
 	
-	if ( (hb->loop == 0 && temp_size == hb->length) || (hb->size == 0)	||  read == NULL)
+	if ( read == NULL)
 	{		
 		Throw(ERR_NO_MORE_NEXT);
 	}
@@ -183,40 +166,25 @@ char *historyBufferReadNext(HistoryBuffer *hb)
 	{
 		if( read == hb->endofsize)
 		{
+			move_read_ptr = read;
 			read = hb->initial;
-			if ( move_read_ptr != hb->end)
-				move_read_ptr+=sizeof(String);
-			temp_size = 0;
+			return read;
+		}
+		else if( read == hb->end)
+		{
+			read+=sizeof(String);
 			return read;
 		}
 		else if( read == hb->latest)
 		{
-			move_read_ptr = hb->latest-=sizeof(String);
-			temp_size++;
-			temp_ptr = read;
+			move_read_ptr = read;
 			read = NULL;
-			return temp_ptr;
-		}
-		else if ( read == hb->initial)
-		{
-			read+=sizeof(String);
-			move_read_ptr = hb->initial;
-			temp_size++;
-			return read;
+			Throw(ERR_NO_MORE_NEXT);
 		}
 		else
 		{
+			move_read_ptr = read;
 			read+=sizeof(String);
-			if ( read == hb->latest)
-			{
-				temp_ptr = read;
-				move_read_ptr = hb->latest+=sizeof(String);
-				temp_size++;
-				read = NULL;
-				return temp_ptr;
-			}
-			move_read_ptr+=sizeof(String);
-			temp_size++;
 			return read;
 		}
 	}

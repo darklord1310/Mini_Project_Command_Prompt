@@ -637,7 +637,6 @@ void test_historyBufferReadNext_given_read_is_latest_and_loop_is_0_should_throw_
 		historyBufferAdd(hb, string4);
 		string_return = historyBufferReadPrevious(hb);
 		string_return = historyBufferReadNext(hb);
-		string_return = historyBufferReadNext(hb);
 		TEST_FAIL_MESSAGE("Expect error to be generated");
 		
 	}Catch(err)
@@ -672,7 +671,6 @@ void test_historyBufferReadNext_given_read_is_latest_and_loop_is_1_should_throw_
 		historyBufferAdd(hb, string5);
 		string_return = historyBufferReadPrevious(hb);
 		string_return = historyBufferReadNext(hb);
-		string_return = historyBufferReadNext(hb);
 		TEST_FAIL_MESSAGE("Expect error to be generated");
 		
 	}Catch(err)
@@ -682,34 +680,6 @@ void test_historyBufferReadNext_given_read_is_latest_and_loop_is_1_should_throw_
 	}
 }
 
-
-void test_historyBufferReadNext_given_1_2_3_when_read_point_at_3_should_return_3()
-{
-	CEXCEPTION_T err;
-	
-	HistoryBuffer *hb = historyBufferNew(4);
-
-	char string1[] = "1";
-	char string2[] = "2";
-	char string3[] = "3";
-	char *string_return;
-
-	Try{
-	
-		historyBufferAdd(hb, string1);
-		historyBufferAdd(hb, string2);
-		historyBufferAdd(hb, string3);
-		string_return = historyBufferReadPrevious(hb);		//1
-		TEST_ASSERT_EQUAL_STRING(string3 , string_return);
-		string_return = historyBufferReadNext(hb);
-		TEST_ASSERT_EQUAL_STRING(string3 , string_return);
-	
-	}Catch(err)
-	{
-		TEST_ASSERT_EQUAL(ERR_NO_MORE_NEXT,err);
-		TEST_FAIL_MESSAGE("Do not expect error to be generated");
-	}
-}
 
 
 
@@ -731,12 +701,14 @@ void test_historyBufferReadNext_call_twice_given_1_2_3_when_read_point_at_1_shou
 		historyBufferAdd(hb, string2);
 		historyBufferAdd(hb, string3);
 		string_return = historyBufferReadPrevious(hb);	
-		string_return = historyBufferReadPrevious(hb);		
+		string_return = historyBufferReadPrevious(hb);	
 		string_return = historyBufferReadPrevious(hb);
 		string_return = historyBufferReadNext(hb);
 		TEST_ASSERT_EQUAL_STRING(string2 , string_return);
 		string_return = historyBufferReadNext(hb);
 		TEST_ASSERT_EQUAL_STRING(string3 , string_return);
+		string_return = historyBufferReadPrevious(hb);
+	
 	
 	}Catch(err)
 	{
@@ -782,7 +754,7 @@ void test_historyBufferReadNext_call_once_given_1_2_3_4_when_read_point_at_3_sho
 
 
 
-void test_historyBufferReadNext_call_once_given_1_2_3_4_5_6_7_when_read_point_at_4_should_get_5()
+void test_historyBufferReadNext_call_thrice_given_1_2_3_4_5_6_7_when_read_point_at_4_should_get_5_6_7()
 {
 	CEXCEPTION_T err;
 	
@@ -812,6 +784,10 @@ void test_historyBufferReadNext_call_once_given_1_2_3_4_5_6_7_when_read_point_at
 		string_return = historyBufferReadPrevious(hb);
 		string_return = historyBufferReadNext(hb);
 		TEST_ASSERT_EQUAL_STRING(string5 , string_return);
+		string_return = historyBufferReadNext(hb);
+		TEST_ASSERT_EQUAL_STRING(string6 , string_return);
+		string_return = historyBufferReadNext(hb);
+		TEST_ASSERT_EQUAL_STRING(string7 , string_return);
 		
 	}Catch(err)
 	{
@@ -821,26 +797,36 @@ void test_historyBufferReadNext_call_once_given_1_2_3_4_5_6_7_when_read_point_at
 }
 
 
-void test_historyBufferReadNext_call_once_given_1_2_3_4_5when_read_point_at_4_should_get_5()
+
+
+
+/*  Given input string of 1+2	2+4	  3+6	4+8	  5+10  11-4   12*3 	and the size of buffer is 5 
+ *	latest should be pointed to 12*3	after adding all the strings into historybuffer
+ *	Read previous 3 times should get 5+10
+ *	Read next 2 times should get 12*3
+ *	Read previous one time should get 11-4
+ *	Read next one time should get 12*3
+ *	Read previous 4 times should get 3+6
+ *	Read next 2 times should get 5+10
+ */
+void test_historyBufferReadNext_and_historyBufferReadPrevious()
 {
 	CEXCEPTION_T err;
 	
-	HistoryBuffer *hb = historyBufferNew(4);
+	HistoryBuffer *hb = historyBufferNew(5);
 
-	char string1[] = "1";
-	char string2[] = "2";
-	char string3[] = "3";
-	char string4[] = "4";
-	char string5[] = "5";
-	char string6[] = "6";
-	char string7[] = "7";
-	char string8[] = "8";
-	char string9[] = "9";
+	char string1[] = "1+2";
+	char string2[] = "2+4";
+	char string3[] = "3+6";
+	char string4[] = "4+8";
+	char string5[] = "5+10";
+	char string6[] = "11-4";
+	char string7[] = "12*3";
 	char *string_return;
-	int i;
-
+	
 	Try{
 
+		//add 7 times expect hb->latest to be 12*3
 		historyBufferAdd(hb, string1);
 		historyBufferAdd(hb, string2);
 		historyBufferAdd(hb, string3);
@@ -848,24 +834,40 @@ void test_historyBufferReadNext_call_once_given_1_2_3_4_5when_read_point_at_4_sh
 		historyBufferAdd(hb, string5);
 		historyBufferAdd(hb, string6);
 		historyBufferAdd(hb, string7);
-		historyBufferAdd(hb, string8);
-		historyBufferAdd(hb, string9);
-		// printf("%s\n", hb->latest);
-		// printf("%s\n", hb->end);
-		// for (i=0; i< hb->length ; i++)
-		// {
-			
-			// printf("%s\n", hb->initial);
-			// hb->initial+=sizeof(String);
-		// }
+		TEST_ASSERT_EQUAL_STRING(string7 , hb->latest);
+		
+		
+		//read previous 3 times expect 5+10
 		string_return = historyBufferReadPrevious(hb);
-		printf("value : %s\n", string_return);
 		string_return = historyBufferReadPrevious(hb);
-		printf("value : %s\n", string_return);
 		string_return = historyBufferReadPrevious(hb);
-		printf("value : %s\n", string_return);
+		TEST_ASSERT_EQUAL_STRING(string5 , string_return);
+		
+		
+		//read next 2 times expect 12*3
+		string_return = historyBufferReadNext(hb);
+		string_return = historyBufferReadNext(hb);
+		TEST_ASSERT_EQUAL_STRING(string7 , string_return);
+		
+		//read previous one time expect 11-4
 		string_return = historyBufferReadPrevious(hb);
-		printf("value : %s\n", string_return);
+		TEST_ASSERT_EQUAL_STRING(string6 , string_return);
+		
+		//read next one time expect 12*3
+		string_return = historyBufferReadNext(hb);
+		TEST_ASSERT_EQUAL_STRING(string7 , string_return);
+		
+		//read previous 4 times expect 3+6
+		string_return = historyBufferReadPrevious(hb);
+		string_return = historyBufferReadPrevious(hb);
+		string_return = historyBufferReadPrevious(hb);
+		string_return = historyBufferReadPrevious(hb);
+		TEST_ASSERT_EQUAL_STRING(string3 , string_return);
+		
+		//read next 2 times expect	5+10
+		string_return = historyBufferReadNext(hb);
+		string_return = historyBufferReadNext(hb);
+		TEST_ASSERT_EQUAL_STRING(string5 , string_return);
 	
 		
 	}Catch(err)
@@ -874,5 +876,3 @@ void test_historyBufferReadNext_call_once_given_1_2_3_4_5when_read_point_at_4_sh
 		TEST_FAIL_MESSAGE("Do not expect error to be generated");
 	}
 }
-
-
