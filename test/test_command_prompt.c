@@ -6,9 +6,14 @@
 #include "mock_get_ch.h"
 #include "mock_putch.h"
 #include "mock_mockspecial_keys.h"
+#include "CException.h"
+
+
 
 void setUp(void)
 {
+	length_of_input = 0;	// the length of input must be zero at first
+	
 }
 
 void tearDown(void)
@@ -64,6 +69,7 @@ void test_is_special_key_given_arrow_up_should_return_CODE_ARROWUP()
 }
 
 
+
 // b is not a special key so will return 0
 void test_is_special_key_given_b_should_return_0()
 {
@@ -81,8 +87,8 @@ void test_is_special_key_given_b_should_return_0()
 
 
 
-//when special key is not pressed, it will jump out from getting input from user, hence buffer stop at the last input
-void test_user_input_interface_given_abc_and_enter_buffer_should_get_abc()
+//when special key is pressed, it will jump out from getting input from user, hence buffer stop at the last input
+void test_user_input_interface_given_abc_and_enter_key_buffer_should_get_abc()
 {
 	int key_return;  // the variable which will get the code which consists of escape and ascii code
 	
@@ -97,7 +103,7 @@ void test_user_input_interface_given_abc_and_enter_buffer_should_get_abc()
 	
 	// run
 	key_return = user_input_interface();
-	TEST_ASSERT_EQUAL_STRING("abc", temp_buffer);
+	TEST_ASSERT_EQUAL_STRING("abc", user_input);
 	TEST_ASSERT_EQUAL( CODE_ENTER, key_return); 
 }
 
@@ -119,6 +125,7 @@ void test_mockspecialkeys_given_arrowup_should_call_function_mockARROWUP()
 }
 
 
+
 void test_mockspecialkeys_given_arrowdown_should_call_function_mockARROWDOWN()
 {
 	//mock
@@ -133,6 +140,7 @@ void test_mockspecialkeys_given_arrowdown_should_call_function_mockARROWDOWN()
 }
 
 
+
 void test_mockspecialkeys_given_arrowright_should_call_function_mockARROWRIGHT()
 {
 	//mock
@@ -145,6 +153,7 @@ void test_mockspecialkeys_given_arrowright_should_call_function_mockARROWRIGHT()
 	int key = user_input_interface();
 	mockspecialkeys(key);
 }
+
 
 
 void test_mockspecialkeys_given_arrowleft_should_call_function_mockARROWLEFT()
@@ -163,12 +172,10 @@ void test_mockspecialkeys_given_arrowleft_should_call_function_mockARROWLEFT()
 
 
 
-
 // to test the handle backspace function
-void test_handle_BACKSPACE_given_abcdef_should_get_abcde()
+void test_handle_BACKSPACE_given_abcde_should_get_abcd()
 {
-	int key_return;  // the variable which will get the code which consists of escape and ascii code
-	
+
 	// mock
 	get_character_ExpectAndReturn('a');
 	put_character_Expect('a');
@@ -180,22 +187,19 @@ void test_handle_BACKSPACE_given_abcdef_should_get_abcde()
 	put_character_Expect('d');
 	get_character_ExpectAndReturn('e');
 	put_character_Expect('e');
-	get_character_ExpectAndReturn(KEY_ENTER); //it dont matter what key is pass into the function, it just use to get out from the function
+	get_character_ExpectAndReturn(KEY_BACKSPACE); 
 	
 	// run
-	key_return = user_input_interface();
-	TEST_ASSERT_EQUAL_STRING("abcde", temp_buffer);
-	handle_BACKSPACE();
-	TEST_ASSERT_EQUAL_STRING("abcd", temp_buffer);
+	main_command_prompt();
+	TEST_ASSERT_EQUAL_STRING("abcd", user_input);
 }
 
 
 
 
-// to test the handle backspace function
+// to test the handle backspace function for twice
 void test_handle_BACKSPACE_twice_given_abcde_should_get_abc()
 {
-	int key_return;  // the variable which will get the code which consists of escape and ascii code
 	
 	// mock
 	get_character_ExpectAndReturn('a');
@@ -208,19 +212,551 @@ void test_handle_BACKSPACE_twice_given_abcde_should_get_abc()
 	put_character_Expect('d');
 	get_character_ExpectAndReturn('e');
 	put_character_Expect('e');
-	get_character_ExpectAndReturn(KEY_ENTER);	//it dont matter what key is pass into the function, it just use to get out from the function
+	get_character_ExpectAndReturn(KEY_BACKSPACE);	
+	get_character_ExpectAndReturn(KEY_BACKSPACE);
+	// get_character_ExpectAndReturn('d');
+	// put_character_Expect('d');	
+	// get_character_ExpectAndReturn(KEY_ENTER);
+
+	// run
+	main_command_prompt();
+	main_command_prompt();
+	// main_command_prompt();
+	TEST_ASSERT_EQUAL_STRING("abc", user_input);
+
+}
+
+
+
+// to test the handle backspace function when empty input and try to backspace will throw error
+void test_handle_BACKSPACE_thrice_given_ab_should_throw_error()
+{
+	CEXCEPTION_T error;
+		
+	// mock
+	get_character_ExpectAndReturn('a');
+	put_character_Expect('a');
+	get_character_ExpectAndReturn('b');
+	put_character_Expect('b');
+	get_character_ExpectAndReturn(KEY_BACKSPACE);	
+	get_character_ExpectAndReturn(KEY_BACKSPACE);
+	get_character_ExpectAndReturn(KEY_BACKSPACE);		
 	
 	// run
-	key_return = user_input_interface();
-	TEST_ASSERT_EQUAL_STRING("abcde", temp_buffer);
-	handle_BACKSPACE();
-	TEST_ASSERT_EQUAL_STRING("abcd", temp_buffer);
-	handle_BACKSPACE();
-	TEST_ASSERT_EQUAL_STRING("abc", temp_buffer);
+	Try
+	{
+		main_command_prompt();
+		main_command_prompt();
+		main_command_prompt();
+		TEST_FAIL_MESSAGE("Expected error to be generated");
+		
+	}Catch(error){
+		
+		TEST_ASSERT_EQUAL(ERR_EMPTY_USER_INPUT,error);
+		printf("Error generated : ERR_EMPTY_USER_INPUT");
+	}
+}
+
+
+
+void test_initialize_historybuffer_given_length_of_buffer_is_5_should_allocate_length_of_5_to_the_buffer()
+{
+	initialize_historybuffer(5);
+	TEST_ASSERT_EQUAL(5, hb->length);
 }
 
 
 
 
+// when user type string of abc and press enter, abc should go into buffer and latest should point to abc
+void test_given_abc_when_handle_ENTER_is_called_should_go_into_buffer()
+{
+	initialize_historybuffer(3);			//initialize history buffer
+	
+	// mock
+	get_character_ExpectAndReturn('a');
+	put_character_Expect('a');
+	get_character_ExpectAndReturn('b');
+	put_character_Expect('b');
+	get_character_ExpectAndReturn('c');
+	put_character_Expect('c');
+	get_character_ExpectAndReturn(KEY_ENTER);
+
+	// run
+	main_command_prompt();
+	TEST_ASSERT_EQUAL_STRING("abc", hb->latest);
+
+}
 
 
+
+/* Given strings of abc  1+2  3-4  and each of it is insert into history buffer
+ * when enter is press
+ * Expect : latest = 3-4
+ * 			end    = abc
+ */
+void test_given_abc_1plus2_3minus4_when_handle_ENTER_is_called_should_go_into_buffer_respectively()
+{
+	initialize_historybuffer(3);			//initialize history buffer
+	
+	// mock
+	get_character_ExpectAndReturn('a');
+	put_character_Expect('a');
+	get_character_ExpectAndReturn('b');
+	put_character_Expect('b');
+	get_character_ExpectAndReturn('c');
+	put_character_Expect('c');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('1');
+	put_character_Expect('1');
+	get_character_ExpectAndReturn('+');
+	put_character_Expect('+');
+	get_character_ExpectAndReturn('2');
+	put_character_Expect('2');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('3');
+	put_character_Expect('3');
+	get_character_ExpectAndReturn('-');
+	put_character_Expect('-');
+	get_character_ExpectAndReturn('4');
+	put_character_Expect('4');
+	get_character_ExpectAndReturn(KEY_ENTER);
+
+	// run
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	TEST_ASSERT_EQUAL_STRING("3-4", hb->latest);
+	TEST_ASSERT_EQUAL_STRING("abc", hb->end);
+}	
+
+
+
+/* Given strings of abc  def  ghi  are already inside history buffer
+ * Now arrow up key is pressed.
+ * Expect:
+ *			ghi		return and stored into temp_buffer
+ * 			
+ */
+void test_given_abc_def_ghi_are_inside_history_buffer_when_arrow_up_is_pressed_ghi_should_return_to_temp_buffer()
+{
+
+	CEXCEPTION_T error;
+	initialize_historybuffer(3);			//initialize history buffer
+	
+	// mock
+	get_character_ExpectAndReturn('a');
+	put_character_Expect('a');
+	get_character_ExpectAndReturn('b');
+	put_character_Expect('b');
+	get_character_ExpectAndReturn('c');
+	put_character_Expect('c');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('d');
+	put_character_Expect('d');
+	get_character_ExpectAndReturn('e');
+	put_character_Expect('e');
+	get_character_ExpectAndReturn('f');
+	put_character_Expect('f');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('g');
+	put_character_Expect('g');
+	get_character_ExpectAndReturn('h');
+	put_character_Expect('h');
+	get_character_ExpectAndReturn('i');
+	put_character_Expect('i');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_UP);
+
+	//run
+	Try
+	{
+		main_command_prompt();
+		main_command_prompt();
+		main_command_prompt();
+		main_command_prompt();
+		TEST_ASSERT_EQUAL_STRING("ghi", temp_buffer);
+		
+	}Catch(error){
+		
+		TEST_ASSERT_EQUAL(ERR_NO_MORE_PREVIOUS,error);
+		TEST_FAIL_MESSAGE("Do not expect error to be generated");
+	}
+}
+
+
+
+/* Given strings of abc  def  ghi  are already inside history buffer
+ * Now arrow up key is pressed twice
+ * Expect:
+ *			def	return and stored into temp_buffer
+ * 			
+ */
+void test_given_abc_def_ghi_are_inside_history_buffer_when_arrow_up_is_pressed_twice_def_should_return_to_temp_buffer()
+{
+	CEXCEPTION_T error;
+	initialize_historybuffer(3);			//initialize history buffer
+		
+	// mock
+	get_character_ExpectAndReturn('a');
+	put_character_Expect('a');
+	get_character_ExpectAndReturn('b');
+	put_character_Expect('b');
+	get_character_ExpectAndReturn('c');
+	put_character_Expect('c');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('d');
+	put_character_Expect('d');
+	get_character_ExpectAndReturn('e');
+	put_character_Expect('e');
+	get_character_ExpectAndReturn('f');
+	put_character_Expect('f');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('g');
+	put_character_Expect('g');
+	get_character_ExpectAndReturn('h');
+	put_character_Expect('h');
+	get_character_ExpectAndReturn('i');
+	put_character_Expect('i');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_UP);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_UP);
+
+	//run
+
+	Try
+	{
+		main_command_prompt();
+		main_command_prompt();
+		main_command_prompt();
+		main_command_prompt();
+		main_command_prompt();
+		TEST_ASSERT_EQUAL_STRING("def", temp_buffer);
+		
+	}Catch(error){
+		
+		TEST_ASSERT_EQUAL(ERR_NO_MORE_PREVIOUS,error);
+		TEST_FAIL_MESSAGE("Do not expect error to be generated");
+	}
+
+}
+
+
+
+
+/* Given strings of abc  def  ghi  are already inside history buffer
+ * Now arrow up key is pressed four times
+ * Expect:
+ *			NO_MORE_PREVIOUS error to be throw
+ * 			
+ */
+void test_given_abc_def_ghi_are_inside_history_buffer_when_arrow_up_is_pressed_four_times_should_throw_error()
+{
+	CEXCEPTION_T error;
+	initialize_historybuffer(3);			//initialize history buffer
+		
+	// mock
+	get_character_ExpectAndReturn('a');
+	put_character_Expect('a');
+	get_character_ExpectAndReturn('b');
+	put_character_Expect('b');
+	get_character_ExpectAndReturn('c');
+	put_character_Expect('c');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('d');
+	put_character_Expect('d');
+	get_character_ExpectAndReturn('e');
+	put_character_Expect('e');
+	get_character_ExpectAndReturn('f');
+	put_character_Expect('f');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('g');
+	put_character_Expect('g');
+	get_character_ExpectAndReturn('h');
+	put_character_Expect('h');
+	get_character_ExpectAndReturn('i');
+	put_character_Expect('i');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_UP);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_UP);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_UP);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_UP);
+
+	//run
+	Try
+	{
+		main_command_prompt();
+		main_command_prompt();
+		main_command_prompt();
+		main_command_prompt();
+		TEST_ASSERT_EQUAL_STRING("ghi", temp_buffer);
+		main_command_prompt();
+		TEST_ASSERT_EQUAL_STRING("def", temp_buffer);
+		main_command_prompt();
+		TEST_ASSERT_EQUAL_STRING("abc", temp_buffer);
+		main_command_prompt();
+		TEST_FAIL_MESSAGE("Expect error to be generated");
+			
+	}Catch(error){
+		
+		TEST_ASSERT_EQUAL(ERR_NO_MORE_PREVIOUS,error);
+		printf("Error generated : NO_MORE_PREVIOUS");
+	}
+}
+
+
+
+/* Given strings of abc  def  ghi  are already inside history buffer
+ * Now arrow up key is pressed twice
+ * Then arrow down is pressed once
+ * Expect:
+ *			ghi return and store in temp_buffer
+ * 			
+ */
+void test_given_abc_def_ghi_are_inside_history_buffer_when_arrow_up_is_pressed_twice_arrow_down_press_once_ghi_should_store_in_temp_buffer()
+{
+	CEXCEPTION_T error;
+	initialize_historybuffer(3);			//initialize history buffer
+		
+	// mock
+	get_character_ExpectAndReturn('a');
+	put_character_Expect('a');
+	get_character_ExpectAndReturn('b');
+	put_character_Expect('b');
+	get_character_ExpectAndReturn('c');
+	put_character_Expect('c');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('d');
+	put_character_Expect('d');
+	get_character_ExpectAndReturn('e');
+	put_character_Expect('e');
+	get_character_ExpectAndReturn('f');
+	put_character_Expect('f');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('g');
+	put_character_Expect('g');
+	get_character_ExpectAndReturn('h');
+	put_character_Expect('h');
+	get_character_ExpectAndReturn('i');
+	put_character_Expect('i');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_UP);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_UP);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_DOWN);
+
+	//run
+	Try
+	{
+		main_command_prompt();
+		main_command_prompt();
+		main_command_prompt();
+		main_command_prompt();
+		main_command_prompt();
+		main_command_prompt();
+		TEST_ASSERT_EQUAL_STRING("ghi", temp_buffer);
+				
+	}Catch(error){
+		
+		TEST_ASSERT_EQUAL(ERR_NO_MORE_PREVIOUS,error);
+		TEST_FAIL_MESSAGE("Do not expect error to be generated");
+	}
+}
+
+
+
+
+/* Given strings of abc  def  ghi  are already inside history buffer
+ * Now arrow up key is pressed once
+ * Then arrow down is pressed twice
+ * Expect:
+ *			NO_MORE_NEXT error to be throw
+ * 			
+ */
+void test_given_abc_def_ghi_are_inside_history_buffer_when_arrow_up_is_pressed_once_arrow_down_press_twice_should_throw_error()
+{
+	CEXCEPTION_T error;
+	initialize_historybuffer(3);			//initialize history buffer
+		
+	// mock
+	get_character_ExpectAndReturn('a');
+	put_character_Expect('a');
+	get_character_ExpectAndReturn('b');
+	put_character_Expect('b');
+	get_character_ExpectAndReturn('c');
+	put_character_Expect('c');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('d');
+	put_character_Expect('d');
+	get_character_ExpectAndReturn('e');
+	put_character_Expect('e');
+	get_character_ExpectAndReturn('f');
+	put_character_Expect('f');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('g');
+	put_character_Expect('g');
+	get_character_ExpectAndReturn('h');
+	put_character_Expect('h');
+	get_character_ExpectAndReturn('i');
+	put_character_Expect('i');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_UP);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_DOWN);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_DOWN);
+
+	//run
+	Try
+	{
+		main_command_prompt();
+		main_command_prompt();
+		main_command_prompt();
+		main_command_prompt();
+		main_command_prompt();
+		main_command_prompt();
+		TEST_FAIL_MESSAGE("Expect error to be generated");
+					
+	}Catch(error){
+		
+		TEST_ASSERT_EQUAL(ERR_NO_MORE_NEXT,error);
+		printf("Error generated : NO_MORE_NEXT");
+	}
+}
+
+
+
+/* Given strings of abc  def  ghi  are already inside history buffer
+ * Type ggwp but no enter first
+ * Now arrow up key is pressed once
+ * Then arrow down is pressed once
+ * Expect:
+ *			user_input to be ggwp
+ * 			
+ */
+void test_handle_ARROWUP_and_handle_ARROWUP()
+{
+	CEXCEPTION_T error;
+	initialize_historybuffer(3);			//initialize history buffer
+		
+	// mock
+	get_character_ExpectAndReturn('a');
+	put_character_Expect('a');
+	get_character_ExpectAndReturn('b');
+	put_character_Expect('b');
+	get_character_ExpectAndReturn('c');
+	put_character_Expect('c');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('d');
+	put_character_Expect('d');
+	get_character_ExpectAndReturn('e');
+	put_character_Expect('e');
+	get_character_ExpectAndReturn('f');
+	put_character_Expect('f');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('g');
+	put_character_Expect('g');
+	get_character_ExpectAndReturn('h');
+	put_character_Expect('h');
+	get_character_ExpectAndReturn('i');
+	put_character_Expect('i');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('g');
+	put_character_Expect('g');
+	get_character_ExpectAndReturn('g');
+	put_character_Expect('g');
+	get_character_ExpectAndReturn('w');
+	put_character_Expect('w');
+	get_character_ExpectAndReturn('p');
+	put_character_Expect('p');
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_LEFT);		// this is just to exit from the input loop
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_UP);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_DOWN);
+
+	//run
+	Try
+	{
+		main_command_prompt();
+		main_command_prompt();
+		main_command_prompt();
+		main_command_prompt();
+		main_command_prompt();
+		TEST_ASSERT_EQUAL_STRING("ghi", temp_buffer);
+		main_command_prompt();
+
+	}Catch(error){
+		
+		TEST_ASSERT_EQUAL(ERR_NO_MORE_PREVIOUS,error);
+		TEST_FAIL_MESSAGE("Do not expect error to be generated");
+	}
+}
+
+
+
+void test_handle_PAGEUP_given_123_456_789_000_when_pageup_is_pressed_should_get_123()
+{
+	CEXCEPTION_T error;
+	initialize_historybuffer(3);			//initialize history buffer
+		
+	// mock
+	get_character_ExpectAndReturn('1');
+	put_character_Expect('1');
+	get_character_ExpectAndReturn('2');
+	put_character_Expect('2');
+	get_character_ExpectAndReturn('3');
+	put_character_Expect('3');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('4');
+	put_character_Expect('4');
+	get_character_ExpectAndReturn('5');
+	put_character_Expect('5');
+	get_character_ExpectAndReturn('6');
+	put_character_Expect('6');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('7');
+	put_character_Expect('7');
+	get_character_ExpectAndReturn('8');
+	put_character_Expect('8');
+	get_character_ExpectAndReturn('9');
+	put_character_Expect('9');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('0');
+	put_character_Expect('0');
+	get_character_ExpectAndReturn('0');
+	put_character_Expect('0');
+	get_character_ExpectAndReturn('0');
+	put_character_Expect('0');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(KEY_PAGEUP);
+
+	//run
+	Try
+	{
+		main_command_prompt();
+		main_command_prompt();
+		main_command_prompt();
+		main_command_prompt();
+		main_command_prompt();
+		printf("%s\n" ,hb->end);
+		TEST_ASSERT_EQUAL_STRING("123", temp_buffer);
+
+	}Catch(error){
+		
+		TEST_ASSERT_EQUAL(ERR_NO_MORE_PREVIOUS,error);
+		TEST_FAIL_MESSAGE("Do not expect error to be generated");
+	}
+}

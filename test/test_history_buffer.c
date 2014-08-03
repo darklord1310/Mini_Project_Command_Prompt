@@ -566,6 +566,33 @@ void test_historyBufferReadPrevious_given_empty_buffer_should_throw_error()
 }
 
 
+void test_historyBufferReadPrevious_given_1_2_when_read_previous_thrice_should_throw_error()
+{
+
+	CEXCEPTION_T err;
+	
+	HistoryBuffer *hb = historyBufferNew(2);
+	char *string_return;
+	char string1[] = "1";
+	char string2[] = "2";
+
+	Try{
+	
+		historyBufferAdd(hb, string1);
+		historyBufferAdd(hb, string2);
+		string_return = historyBufferReadPrevious(hb);
+		string_return = historyBufferReadPrevious(hb);
+		string_return = historyBufferReadPrevious(hb);
+		TEST_FAIL_MESSAGE("Expect error to be generated");
+		
+	}Catch(err)
+	{
+		TEST_ASSERT_EQUAL(ERR_NO_MORE_PREVIOUS,err);
+		printf("Error generated : NO_MORE_PREVIOUS");
+	}
+}
+
+
 void test_historyBufferReadNext_given_empty_buffer_should_throw_error()
 {
 
@@ -637,12 +664,11 @@ void test_historyBufferReadNext_given_read_is_latest_and_loop_is_0_should_throw_
 		historyBufferAdd(hb, string4);
 		string_return = historyBufferReadPrevious(hb);
 		string_return = historyBufferReadNext(hb);
-		TEST_FAIL_MESSAGE("Expect error to be generated");
 		
 	}Catch(err)
 	{
 		TEST_ASSERT_EQUAL(ERR_NO_MORE_NEXT,err);
-		printf("Error generated : NO_MORE_NEXT");
+		TEST_FAIL_MESSAGE("Do not expect error to be generated");
 	}
 }
 
@@ -671,12 +697,11 @@ void test_historyBufferReadNext_given_read_is_latest_and_loop_is_1_should_throw_
 		historyBufferAdd(hb, string5);
 		string_return = historyBufferReadPrevious(hb);
 		string_return = historyBufferReadNext(hb);
-		TEST_FAIL_MESSAGE("Expect error to be generated");
 		
 	}Catch(err)
 	{
 		TEST_ASSERT_EQUAL(ERR_NO_MORE_NEXT,err);
-		printf("Error generated : NO_MORE_NEXT");
+		TEST_FAIL_MESSAGE("Do not expect error to be generated");
 	}
 }
 

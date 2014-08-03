@@ -38,9 +38,41 @@
 #define CODE_ESCAPE			 0xFF1B
 
 typedef int Keycode;
+typedef enum {ERR_EMPTY_USER_INPUT}ErrCode;
 
 
+extern char user_input[MAX_BUFFER_SIZE];
 extern char temp_buffer[MAX_BUFFER_SIZE];
+extern int length_of_input;
+
+#ifndef history_buffer_H
+#define history_buffer_H
+
+typedef enum {ERR_NO_MORE_PREVIOUS, ERR_NO_MORE_NEXT}ErrorCode;
+
+typedef struct { char string[1024]; } String;
+
+extern char *read;
+extern char *move_read_ptr;
+
+
+typedef struct
+{
+	char *initial;	//initial is the pointer which will always point to the very first location of the buffer
+	char *latest;	//latest is the pointer which will always point to the latest string added 
+	char *end;		//end is the pointer which will always point to the last string
+	int size;		//size is the size allocated for each element
+	int length;		//length is the length of the history where the buffer could remember
+	char *buffer;
+	char *endofsize; //pointer which will always point to the last location of the buffer
+	int loop;	
+	char *readend;   //pointer which will always point to the last input
+	
+}HistoryBuffer;
+
+#endif // history_buffer_H
+
+
 
 
 /*
@@ -75,7 +107,7 @@ extern char temp_buffer[MAX_BUFFER_SIZE];
 */
 
 
-
+HistoryBuffer *hb;
 Keycode get_key_press();  				   // get key press 
 Keycode is_special_key(int key_code);	   // check whether input is special key or not
 Keycode user_input_interface();
@@ -95,7 +127,8 @@ void handle_INSERT();
 void handle_END();
 void handle_ENTER();
 void handle_ESCAPE();
-void initialize_historybuffer(int length);
+void initialize_historybuffer(int length_of_buffer);
+void main_command_prompt();
 
 
 #endif // command_prompt_H

@@ -11,6 +11,7 @@ typedef struct { char string[1024]; } String;
 extern char *read;
 extern char *move_read_ptr;
 
+
 typedef struct
 {
 	char *initial;	//initial is the pointer which will always point to the very first location of the buffer
@@ -20,8 +21,9 @@ typedef struct
 	int length;		//length is the length of the history where the buffer could remember
 	char *buffer;
 	char *endofsize; //pointer which will always point to the last location of the buffer
-	int loop;	
-	
+	int loop;
+	char *readend;   //pointer which will always point to the last input
+
 }HistoryBuffer;
 
 

@@ -1,4 +1,5 @@
 #include "history_buffer.h"
+#include "command_prompt.h"
 #include <malloc.h>	 
 #include <stdio.h>
 #include <string.h>
@@ -8,7 +9,7 @@
 
 char *read;
 char *move_read_ptr;
-
+char user_input[MAX_BUFFER_SIZE];
 
 /*
  * Initialize the historybuffer
@@ -179,7 +180,7 @@ char *historyBufferReadNext(HistoryBuffer *hb)
 		{
 			move_read_ptr = read;
 			read = NULL;
-			Throw(ERR_NO_MORE_NEXT);
+			return user_input;
 		}
 		else
 		{
