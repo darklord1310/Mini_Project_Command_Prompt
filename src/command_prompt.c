@@ -98,11 +98,9 @@ Keycode user_input_interface()
  */
 void main_command_prompt()
 {
-	
 	int keycode =  user_input_interface();
 	check_special_keys(keycode);
 }
-
 
 
 
@@ -304,7 +302,7 @@ void handle_BACKSPACE()
 // To initialize for the historybuffer
 void initialize_historybuffer(int length_of_buffer)
 {
-	hb = historyBufferNew(length_of_buffer);
+	// hb = historyBufferNew(length_of_buffer);
 }
 
 
@@ -315,7 +313,7 @@ void initialize_historybuffer(int length_of_buffer)
  */
 void handle_ENTER()
 {
-	historyBufferAdd(hb, user_input);
+	// historyBufferAdd(hb, user_input);
 	length_of_input = 0;		// has to reinitialize length of input to 0 to get new input correctly
 }
 
@@ -325,11 +323,10 @@ void handle_ENTER()
  */
 void handle_ARROWUP()
 {
-
-	char *temp = historyBufferReadPrevious(hb);
-	strcpy(temp_buffer , temp);
-
+	// char *temp = historyBufferReadPrevious(hb);
+	// strcpy(user_input , temp);
 }
+
 
 
 /* To perform arrow down
@@ -337,9 +334,11 @@ void handle_ARROWUP()
  */
 void handle_ARROWDOWN()
 {
-	char *temp = historyBufferReadNext(hb);
-	strcpy(temp_buffer , temp);
+	// char *temp = historyBufferReadNext(hb);
+	// strcpy(user_input , temp);
 }
+
+
 
 void handle_ARROWRIGHT()
 {
@@ -367,14 +366,15 @@ void handle_DEL()
 
 void handle_PAGEUP()
 {
-	strcpy(temp_buffer , hb->end);
+	// strcpy(user_input , hb->end);
 }
 
 
 void handle_PAGEDOWN()
 {
-	strcpy(temp_buffer ,hb->latest);
+	// strcpy(user_input ,hb->latest);
 }
+
 
 void handle_INSERT()
 {
@@ -392,8 +392,5 @@ void handle_END()
 
 void handle_ESCAPE()
 {
-
-
-
 
 }

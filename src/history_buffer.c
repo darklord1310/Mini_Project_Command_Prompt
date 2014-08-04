@@ -4,12 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <CException.h>
 
-
-char *read;
-char *move_read_ptr;
-char user_input[MAX_BUFFER_SIZE];
 
 /*
  * Initialize the historybuffer
@@ -20,18 +15,16 @@ char user_input[MAX_BUFFER_SIZE];
 HistoryBuffer *historyBufferNew(int length)
 {
 	HistoryBuffer *historyBuffer;
-	
 	historyBuffer = malloc(sizeof(HistoryBuffer));
-	historyBuffer->buffer = calloc(length, sizeof(String));
+	historyBuffer->buffer = calloc(sizeof(char*), length);
 	historyBuffer->length = length;
-	historyBuffer->size = 0;
-	historyBuffer->initial = historyBuffer->buffer;
-	historyBuffer->end = historyBuffer->buffer;
-	historyBuffer->loop =0;
-	read = NULL;		// initialize read pointer to NULL, if readprevious is not call first
-						// then readnext will not return anything
+	historyBuffer->currentIndex = 0;
+	historyBuffer->latestIndex	= 0;
+	historyBuffer->startIndex	= 0;
+	historyBuffer->loop    		= 0;
 	return historyBuffer;
 }
+
 
 /*
  *	To free the buffer memory
@@ -53,47 +46,36 @@ void historyBufferDel(HistoryBuffer *hb)
  */
 void historyBufferAdd(HistoryBuffer *hb, char stringtoadd[])
 {
-	if ( hb->size == 0)
-	{
-		strcpy(hb->buffer,stringtoadd);
-		hb->latest = hb->buffer;
-		hb->size++;
-	}
-	else if (hb->size == hb->length)
-	{
-		hb->endofsize = hb->buffer;
-		hb->latest = hb->initial;
-		strcpy(hb->latest,stringtoadd);
-		hb->size = 1;
-		hb->end+= sizeof(String);
-		hb->loop = 1;
-	}
-	else if( hb->loop == 1)
-	{
-		hb->latest = hb->end;
-		strcpy(hb->latest,stringtoadd);
-			
-		if ( hb->size != hb->length-1)
-		{
-			hb->end+= sizeof(String);
-		}
-		else
-		{
-			hb->end = hb->initial;
-		}
-		hb->size++;
-	}
-	else
-	{
-		hb->buffer+= sizeof(String);
-		strcpy(hb->buffer,stringtoadd);
-		hb->latest = hb->buffer;
-		hb->size++;
-	}
-	 
-	 move_read_ptr = hb->latest;
+	if ( hb->buffer[hb->latestIndex] != NULL)
+		free(hb->buffer[hb->latestIndex]);
+		
+	hb->buffer[hb->latestIndex++] = strdup(stringtoadd);
+	hb->latestIndex = readjustIndex(hb , hb->latestIndex);
+	
+	if( hb->latestIndex == hb->startIndex)
+		hb->startIndex++;
 }
 
+
+
+/*
+ * Re-adjust the index of the history buffer
+ *
+ *Input :
+ *					Pointer hb is the pointer which pointed to the HistoryBuffer structure
+ *					index is the variable of index that pass into the function
+ *
+ */
+int readjustIndex(HistoryBuffer *hb , int index)
+{
+	if ( index == hb->length && hb->loop == 0)
+	{
+		hb->startIndex = 1;
+		hb->loop = 1;
+		return 0;
+	}
+	return index;
+}
 
 
 
@@ -107,39 +89,12 @@ void historyBufferAdd(HistoryBuffer *hb, char stringtoadd[])
  *Return :
  *					The latest string that stored in the historyBuffer
  *
- *Error Checking:
- *					will gives error when no more previous string
  */
 char *historyBufferReadPrevious(HistoryBuffer *hb)
 {
-	if (	((read == hb->end) && (move_read_ptr == hb->end))  ||  hb->size == 0   )
-	{
-		Throw(ERR_NO_MORE_PREVIOUS);
-	}
-	else
-	{
-		if(move_read_ptr == hb->end)
-		{
-			read = move_read_ptr;
-			return read;
-		}
-		else if (hb->loop != 0 && move_read_ptr == hb->initial)
-		{
-			read = move_read_ptr;
-			move_read_ptr = hb->endofsize;
-			return read;
-		}
-		else
-		{
-			read = move_read_ptr;
-			move_read_ptr-=sizeof(String);
-			return read;
-		}
-	}
+	hb->latestIndex--;
+	hb->currentIndex = hb->latestIndex;
 }
-
-
-
 
 
 
@@ -158,37 +113,6 @@ char *historyBufferReadPrevious(HistoryBuffer *hb)
  */
 char *historyBufferReadNext(HistoryBuffer *hb)
 {
-	
-	if ( read == NULL)
-	{		
-		Throw(ERR_NO_MORE_NEXT);
-	}
-	else
-	{
-		if( read == hb->endofsize)
-		{
-			move_read_ptr = read;
-			read = hb->initial;
-			return read;
-		}
-		else if( read == hb->end)
-		{
-			read+=sizeof(String);
-			return read;
-		}
-		else if( read == hb->latest)
-		{
-			move_read_ptr = read;
-			read = NULL;
-			return user_input;
-		}
-		else
-		{
-			move_read_ptr = read;
-			read+=sizeof(String);
-			return read;
-		}
-	}
 	
 }
 
