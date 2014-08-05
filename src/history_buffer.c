@@ -75,19 +75,13 @@ void historyBufferAdd(HistoryBuffer *hb, char stringtoadd[])
  */
 int readjustIndex(HistoryBuffer *hb , int index)
 {
-	if ( index == hb->length)
+	if (index >= hb->length)
 		return 0;
-	else if( index < 0 )	// if currentIndex is -1
-	{
-		if( hb->buffer[hb->startIndex] != NULL )	// if historybuffer not empty
-			return 0;	// will stay at the first buffer
-		else
-			return -100;	// -100 is the sentinel value where if the historybuffer is empty
-	}
+	else if( index < 0 )	
+		return hb->length-1;
 	else
 		return index;
 }
-
 
 
 
@@ -103,20 +97,19 @@ int readjustIndex(HistoryBuffer *hb , int index)
  */
 char *historyBufferReadPrevious(HistoryBuffer *hb)
 {
-	if ( hb->currentIndex == 0	&& hb->currentIndex != hb->startIndex)
-		hb->currentIndex = hb->length-1;
-	else if ( hb->currentIndex == hb->startIndex && hb->startIndex != 0);
-	else
-		hb->currentIndex--;
-
+	hb->currentIndex--;
+	
+	if( hb->currentIndex < 0	&&	hb->currentIndex+1 == hb->startIndex)
+	{
+		if( hb->buffer[hb->startIndex] != NULL )	// if historybuffer not empty
+			hb->currentIndex = 0;	// will stay at the first buffer
+		else
+			return user_input;
+	}
 	hb->currentIndex = readjustIndex(hb , hb->currentIndex);
 	
-	if ( hb->currentIndex == -100)
-		return user_input;
-	else
-		return hb->buffer[hb->currentIndex];
+	return hb->buffer[hb->currentIndex];	
 }
-
 
 
 
@@ -129,12 +122,13 @@ char *historyBufferReadPrevious(HistoryBuffer *hb)
  *Return :
  *					The next string that stored in the historyBuffer
  *
- *Error Checking:
- *					will gives error when no more next string
  */
 char *historyBufferReadNext(HistoryBuffer *hb)
 {
-	
+	hb->currentIndex++;
+
+	hb->currentIndex = readjustIndex(hb , hb->currentIndex);
+	return hb->buffer[hb->currentIndex];
 }
 
 
