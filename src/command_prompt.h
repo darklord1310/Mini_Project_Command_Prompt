@@ -42,7 +42,6 @@ typedef enum {ERR_EMPTY_USER_INPUT}ErrCode;
 
 
 extern char user_input[MAX_BUFFER_SIZE];
-extern char temp_buffer[MAX_BUFFER_SIZE];
 extern int length_of_input;
 
 #ifndef history_buffer_H

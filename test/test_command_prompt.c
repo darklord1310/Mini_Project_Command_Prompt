@@ -6,8 +6,6 @@
 #include "mock_get_ch.h"
 #include "mock_putch.h"
 #include "mock_mockspecial_keys.h"
-#include "CException.h"
-
 
 
 void setUp(void)

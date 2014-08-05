@@ -9,7 +9,6 @@ typedef struct
 	int currentIndex;
 	int latestIndex;
 	int startIndex;
-	int loop;
 
 }HistoryBuffer;
 

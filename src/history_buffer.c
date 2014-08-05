@@ -5,6 +5,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+char user_input[MAX_BUFFER_SIZE];
 
 /*
  * Initialize the historybuffer
@@ -21,7 +22,6 @@ HistoryBuffer *historyBufferNew(int length)
 	historyBuffer->currentIndex = 0;
 	historyBuffer->latestIndex	= 0;
 	historyBuffer->startIndex	= 0;
-	historyBuffer->loop    		= 0;
 	return historyBuffer;
 }
 
@@ -48,12 +48,19 @@ void historyBufferAdd(HistoryBuffer *hb, char stringtoadd[])
 {
 	if ( hb->buffer[hb->latestIndex] != NULL)
 		free(hb->buffer[hb->latestIndex]);
-		
-	hb->buffer[hb->latestIndex++] = strdup(stringtoadd);
-	hb->latestIndex = readjustIndex(hb , hb->latestIndex);
 	
 	if( hb->latestIndex == hb->startIndex)
-		hb->startIndex++;
+	{
+		if(hb->startIndex == hb->length-1)
+			hb->startIndex = 0;
+		else if( hb->buffer[hb->startIndex] == NULL);
+		else
+			hb->startIndex++;
+	}
+	
+	hb->buffer[hb->latestIndex++] = strdup(stringtoadd);
+	hb->latestIndex = readjustIndex(hb , hb->latestIndex);
+	hb->currentIndex = hb->latestIndex;
 }
 
 
@@ -68,13 +75,17 @@ void historyBufferAdd(HistoryBuffer *hb, char stringtoadd[])
  */
 int readjustIndex(HistoryBuffer *hb , int index)
 {
-	if ( index == hb->length && hb->loop == 0)
-	{
-		hb->startIndex = 1;
-		hb->loop = 1;
+	if ( index == hb->length)
 		return 0;
+	else if( index < 0 )	// if currentIndex is -1
+	{
+		if( hb->buffer[hb->startIndex] != NULL )	// if historybuffer not empty
+			return 0;	// will stay at the first buffer
+		else
+			return -100;	// -100 is the sentinel value where if the historybuffer is empty
 	}
-	return index;
+	else
+		return index;
 }
 
 
@@ -92,8 +103,18 @@ int readjustIndex(HistoryBuffer *hb , int index)
  */
 char *historyBufferReadPrevious(HistoryBuffer *hb)
 {
-	hb->latestIndex--;
-	hb->currentIndex = hb->latestIndex;
+	if ( hb->currentIndex == 0	&& hb->currentIndex != hb->startIndex)
+		hb->currentIndex = hb->length-1;
+	else if ( hb->currentIndex == hb->startIndex && hb->startIndex != 0);
+	else
+		hb->currentIndex--;
+
+	hb->currentIndex = readjustIndex(hb , hb->currentIndex);
+	
+	if ( hb->currentIndex == -100)
+		return user_input;
+	else
+		return hb->buffer[hb->currentIndex];
 }
 
 

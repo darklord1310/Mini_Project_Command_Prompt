@@ -7,7 +7,6 @@
 
 
 char user_input[MAX_BUFFER_SIZE];
-char temp_buffer[MAX_BUFFER_SIZE];
 int	length_of_input = 0;
 
 
