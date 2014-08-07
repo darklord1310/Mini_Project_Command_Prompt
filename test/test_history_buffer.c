@@ -6,6 +6,8 @@ char user_input[1024];
 
 void setUp(void)
 {
+	previous_status = 0;
+	next_status = 0;
 }
 
 void tearDown(void)
@@ -187,7 +189,7 @@ void test_historyBufferReadPrevious_1plus6_2plus8_given_should_return_2plus8_1pl
 
 
 //buffer overwrite
-void test_historyBufferReadPrevious_1plus6_2plus8_3plus4_5minus4_should_return_5minus4_3plus4_2plus8_when_read_thrice_and_2plus8_when_read_fourth_time_()
+void test_historyBufferReadPrevious_1plus6_2plus8_3plus4_5minus4_should_return_5minus4_3plus4_2plus8_when_read_thrice_and_2plus8_when_read_fourth_time()
 {
 	HistoryBuffer *hb = historyBufferNew(LENGTH_OF_BUFFER);
 	char *string_return;
@@ -215,7 +217,31 @@ void test_historyBufferReadPrevious_1plus6_2plus8_3plus4_5minus4_should_return_5
 
 
 
-void test_historyBufferReadNext_given_1plus6_2plus3_4plus5_should_return_user_input_is_2plus3_when_read_next_thrice()
+void test_historyBufferReadNext_given_1plus6_2plus3_4plus5_should_return_2plus3_4plus5_when_read_next_twice()
+{
+	HistoryBuffer *hb = historyBufferNew(LENGTH_OF_BUFFER);
+
+	char *string_return;
+
+	historyBufferAdd(hb, "1+6");
+	historyBufferAdd(hb, "2+3");
+	historyBufferAdd(hb, "4+5");
+	
+	string_return = historyBufferReadPrevious(hb);
+	string_return = historyBufferReadPrevious(hb);
+	string_return = historyBufferReadPrevious(hb);
+	string_return = historyBufferReadNext(hb);
+	TEST_ASSERT_EQUAL(1, hb->currentIndex);	
+	TEST_ASSERT_EQUAL_STRING("2+3" , string_return);
+	string_return = historyBufferReadNext(hb);
+	TEST_ASSERT_EQUAL(2, hb->currentIndex);	
+	TEST_ASSERT_EQUAL_STRING("4+5" , string_return);
+	historyBufferDel(hb);
+}
+
+
+
+void test_historyBufferReadNext_given_1plus6_2plus3_4plus5_should_return_4plus5_when_currentIndex_is_at_4plus5()
 {
 	HistoryBuffer *hb = historyBufferNew(LENGTH_OF_BUFFER);
 
@@ -229,10 +255,14 @@ void test_historyBufferReadNext_given_1plus6_2plus3_4plus5_should_return_user_in
 	string_return = historyBufferReadPrevious(hb);
 	string_return = historyBufferReadPrevious(hb);
 	string_return = historyBufferReadNext(hb);		
+	
 	TEST_ASSERT_EQUAL_STRING("2+3" , string_return);
-	string_return = historyBufferReadNext(hb);		
+	TEST_ASSERT_EQUAL(1, hb->currentIndex);
+	string_return = historyBufferReadNext(hb);
+	TEST_ASSERT_EQUAL(2, hb->currentIndex);		
 	TEST_ASSERT_EQUAL_STRING("4+5" , string_return);
-	string_return = historyBufferReadNext(hb);		
+	string_return = historyBufferReadNext(hb);	
+	TEST_ASSERT_EQUAL(2, hb->currentIndex);		
 	TEST_ASSERT_EQUAL_STRING("4+5" , string_return);
 	historyBufferDel(hb);
 }
@@ -240,43 +270,27 @@ void test_historyBufferReadNext_given_1plus6_2plus3_4plus5_should_return_user_in
 
 
 
-// void test_historyBufferReadPrevious_given_1_2_3_4_5_when_size_is_4_and_read_5_times_should_get_error()
+// void test_historyBufferReadNext_given_1_2_3_4_5()
 // {
-	// CEXCEPTION_T err;
-	
-	// HistoryBuffer *hb = historyBufferNew(4);
-
-	// char string1[] = "1";
-	// char string2[] = "2";
-	// char string3[] = "3";
-	// char string4[] = "4";
-	// char string5[] = "5";
+	// HistoryBuffer *hb = historyBufferNew(LENGTH_OF_BUFFER);
 	// char *string_return;
 	
-	// Try{
+	// historyBufferAdd(hb, "1");
+	// historyBufferAdd(hb, "2");
+	// historyBufferAdd(hb, "3");
+	// historyBufferAdd(hb, "4");
+	// historyBufferAdd(hb, "5");
 	
-		// historyBufferAdd(hb, string1);
-		// historyBufferAdd(hb, string2);
-		// historyBufferAdd(hb, string3);
-		// historyBufferAdd(hb, string4);
-		// historyBufferAdd(hb, string5);
-		// string_return = historyBufferReadPrevious(hb);		//1
-		// TEST_ASSERT_EQUAL_STRING(string5 , string_return);
-		// string_return = historyBufferReadPrevious(hb);		//2
-		// TEST_ASSERT_EQUAL_STRING(string4 , string_return);
-		// string_return = historyBufferReadPrevious(hb);		//3
-		// TEST_ASSERT_EQUAL_STRING(string3 , string_return);
-		// string_return = historyBufferReadPrevious(hb);		//4
-		// TEST_ASSERT_EQUAL_STRING(string2 , string_return);
-		// string_return = historyBufferReadPrevious(hb);		//5
-		// historyBufferDel(hb);
-		// TEST_FAIL_MESSAGE("Expect error to be generated");
-		
-	// }Catch(err)
-	// {
-		// TEST_ASSERT_EQUAL(ERR_NO_MORE_PREVIOUS,err);
-		// printf("Error generated : NO_MORE_PREVIOUS");
-	// }
+	// string_return = historyBufferReadPrevious(hb);		//1
+	// TEST_ASSERT_EQUAL_STRING("5" , string_return);
+	// string_return = historyBufferReadPrevious(hb);		//2
+	// TEST_ASSERT_EQUAL_STRING("4" , string_return);
+	// string_return = historyBufferReadPrevious(hb);		//3
+	// TEST_ASSERT_EQUAL_STRING("3" , string_return);
+	// string_return = historyBufferReadPrevious(hb);		//4
+	// TEST_ASSERT_EQUAL_STRING("2" , string_return);
+	// string_return = historyBufferReadPrevious(hb);		//5
+	// historyBufferDel(hb);
 // }
 
 

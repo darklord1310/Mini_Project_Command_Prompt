@@ -97,6 +97,11 @@ int readjustIndex(HistoryBuffer *hb , int index)
  */
 char *historyBufferReadPrevious(HistoryBuffer *hb)
 {
+	next_status = 0;
+	
+	if (status == 1)
+		return hb->buffer[hb->startIndex];
+	
 	hb->currentIndex--;
 	
 	if( hb->currentIndex < 0	&&	hb->currentIndex+1 == hb->startIndex)
@@ -107,6 +112,9 @@ char *historyBufferReadPrevious(HistoryBuffer *hb)
 			return user_input;
 	}
 	hb->currentIndex = readjustIndex(hb , hb->currentIndex);
+	
+	if( hb->currentIndex == hb->startIndex)
+		status = 1;
 	
 	return hb->buffer[hb->currentIndex];	
 }
@@ -125,9 +133,16 @@ char *historyBufferReadPrevious(HistoryBuffer *hb)
  */
 char *historyBufferReadNext(HistoryBuffer *hb)
 {
+	previous_status = 0;  //clear the status to 0 to indicate its not at the end of buffer anymore
+	
+	if ( next_status == 1)
+		return hb->buffer[hb->currentIndex];
+		
 	hb->currentIndex++;
-
 	hb->currentIndex = readjustIndex(hb , hb->currentIndex);
+	
+	if (hb->currentIndex == hb->startIndex)
+		next_status = 1;
 	return hb->buffer[hb->currentIndex];
 }
 

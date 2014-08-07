@@ -12,6 +12,8 @@ typedef struct
 
 }HistoryBuffer;
 
+int previous_status;
+int next_status;
 
 int readjustIndex(HistoryBuffer *hb , int index); 
 HistoryBuffer *historyBufferNew(int length);
