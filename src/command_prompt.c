@@ -7,6 +7,7 @@
 
 
 char user_input[MAX_BUFFER_SIZE];
+char latest_input[MAX_BUFFER_SIZE];
 int	length_of_input = 0;
 
 
@@ -71,22 +72,27 @@ Keycode get_key_press()
  */
 Keycode user_input_interface()
 {
-	int status;
+	int status, i;
 	int key_code;
 	
 	while(1)
 	{
 		key_code = get_key_press();
 		status = is_special_key(key_code);
-		if (status != 0)		// status !=0 means special character input
-		{
+		if (status != 0)		// status !=0 means special character input	
 			return status;
-		}
+			
 		user_input[length_of_input] = key_code;
 		put_character(user_input[length_of_input]);
 		length_of_input++;
+		user_input[length_of_input] = '\0';
+		
+		for( i=0 ; user_input[i] != '\0' ; i++)
+		{
+			latest_input[i] = user_input[i];
+		}
+		latest_input[i] = '\0';
 	}
-
 }
 
 
@@ -271,7 +277,6 @@ void mockspecialkeys(int key_code)
 				mockBACKSPACE();
 				break;
 	}
-	
 }
 
 
@@ -289,8 +294,7 @@ void handle_BACKSPACE()
 		j++;
 	}
 	
-	if ( length == 0)
-		Throw(ERR_EMPTY_USER_INPUT);
+	if ( length == 0);
 	
 	user_input[length-1] = '\0';
 	length_of_input--;
@@ -301,10 +305,22 @@ void handle_BACKSPACE()
 // To initialize for the historybuffer
 void initialize_historybuffer(int length_of_buffer)
 {
-	// hb = historyBufferNew(length_of_buffer);
+	hb = historyBufferNew(length_of_buffer);
 }
 
 
+
+//copy the content of a given string to char array
+void copystringtocharaary(char array[] , char *string)
+{
+	int i;
+	
+	for( i=0 ; string[i] != '\0' ; i++)
+	{
+		array[i] = string[i];
+	}
+	array[i] = '\0';
+}
 
 
 /* To perform enter
@@ -312,7 +328,7 @@ void initialize_historybuffer(int length_of_buffer)
  */
 void handle_ENTER()
 {
-	// historyBufferAdd(hb, user_input);
+	historyBufferAdd(hb, user_input);
 	length_of_input = 0;		// has to reinitialize length of input to 0 to get new input correctly
 }
 
@@ -322,8 +338,9 @@ void handle_ENTER()
  */
 void handle_ARROWUP()
 {
-	// char *temp = historyBufferReadPrevious(hb);
-	// strcpy(user_input , temp);
+
+	char *temp = historyBufferReadPrevious(hb);
+	copystringtocharaary(user_input, temp);
 }
 
 
@@ -333,8 +350,9 @@ void handle_ARROWUP()
  */
 void handle_ARROWDOWN()
 {
-	// char *temp = historyBufferReadNext(hb);
-	// strcpy(user_input , temp);
+	char *temp;
+	temp = historyBufferReadNext(hb);
+	copystringtocharaary(user_input, temp);
 }
 
 
@@ -365,13 +383,15 @@ void handle_DEL()
 
 void handle_PAGEUP()
 {
-	// strcpy(user_input , hb->end);
+	int latest = hb->latestIndex;
+	latest = readjustIndex(hb , latest-1);
+	copystringtocharaary(user_input, hb->buffer[latest]);
 }
 
 
 void handle_PAGEDOWN()
 {
-	// strcpy(user_input ,hb->latest);
+	copystringtocharaary(user_input, hb->buffer[hb->startIndex]);
 }
 
 

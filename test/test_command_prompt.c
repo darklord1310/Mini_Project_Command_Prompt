@@ -11,7 +11,8 @@
 void setUp(void)
 {
 	length_of_input = 0;	// the length of input must be zero at first
-	
+	next_status = 0;
+	previous_status = 0;
 }
 
 void tearDown(void)
@@ -257,495 +258,434 @@ void test_handle_BACKSPACE_twice_given_abcde_should_get_abc()
 
 
 
-// void test_initialize_historybuffer_given_length_of_buffer_is_5_should_allocate_length_of_5_to_the_buffer()
-// {
-	// initialize_historybuffer(5);
-	// TEST_ASSERT_EQUAL(5, hb->length);
-// }
+void test_initialize_historybuffer_given_length_of_buffer_is_5_should_allocate_length_of_5_to_the_buffer()
+{
+	initialize_historybuffer(5);
+	TEST_ASSERT_EQUAL(5, hb->length);
+}
 
 
 
-
-//when user type string of abc and press enter, abc should go into buffer and latest should point to abc
-// void test_given_abc_when_handle_ENTER_is_called_should_go_into_buffer()
-// {
-	// initialize_historybuffer(3);			//initialize history buffer
+//when user type string of abc and press enter, abc should go into buffer
+void test_given_abc_when_handle_ENTER_is_called_should_go_into_buffer()
+{
+	initialize_historybuffer(3);			//initialize history buffer
 	
 	//mock
-	// get_character_ExpectAndReturn('a');
-	// put_character_Expect('a');
-	// get_character_ExpectAndReturn('b');
-	// put_character_Expect('b');
-	// get_character_ExpectAndReturn('c');
-	// put_character_Expect('c');
-	// get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('a');
+	put_character_Expect('a');
+	get_character_ExpectAndReturn('b');
+	put_character_Expect('b');
+	get_character_ExpectAndReturn('c');
+	put_character_Expect('c');
+	get_character_ExpectAndReturn(KEY_ENTER);
 
 	//run
-	// main_command_prompt();
-	// TEST_ASSERT_EQUAL_STRING("abc", hb->latest);
-
-// }
-
+	main_command_prompt();
+	TEST_ASSERT_EQUAL_STRING("abc", hb->buffer[0]);
+}
 
 
-// /* Given strings of abc  1+2  3-4  and each of it is insert into history buffer
- // * when enter is press
- // * Expect : latest = 3-4
- // * 			end    = abc
- // */
-// void test_given_abc_1plus2_3minus4_when_handle_ENTER_is_called_should_go_into_buffer_respectively()
-// {
-	// initialize_historybuffer(3);			//initialize history buffer
+
+/* Given strings of abc  1+2  3-4  and each of it is insert into history buffer
+ * when enter is press
+ * Expect : latest = abc
+ * 			end    = abc
+ */
+void test_given_abc_1plus2_3minus4_when_handle_ENTER_is_called_should_go_into_buffer_respectively()
+{
+	initialize_historybuffer(3);			//initialize history buffer
 	
 	//mock
-	// get_character_ExpectAndReturn('a');
-	// put_character_Expect('a');
-	// get_character_ExpectAndReturn('b');
-	// put_character_Expect('b');
-	// get_character_ExpectAndReturn('c');
-	// put_character_Expect('c');
-	// get_character_ExpectAndReturn(KEY_ENTER);
-	// get_character_ExpectAndReturn('1');
-	// put_character_Expect('1');
-	// get_character_ExpectAndReturn('+');
-	// put_character_Expect('+');
-	// get_character_ExpectAndReturn('2');
-	// put_character_Expect('2');
-	// get_character_ExpectAndReturn(KEY_ENTER);
-	// get_character_ExpectAndReturn('3');
-	// put_character_Expect('3');
-	// get_character_ExpectAndReturn('-');
-	// put_character_Expect('-');
-	// get_character_ExpectAndReturn('4');
-	// put_character_Expect('4');
-	// get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('a');
+	put_character_Expect('a');
+	get_character_ExpectAndReturn('b');
+	put_character_Expect('b');
+	get_character_ExpectAndReturn('c');
+	put_character_Expect('c');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('1');
+	put_character_Expect('1');
+	get_character_ExpectAndReturn('+');
+	put_character_Expect('+');
+	get_character_ExpectAndReturn('2');
+	put_character_Expect('2');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('3');
+	put_character_Expect('3');
+	get_character_ExpectAndReturn('-');
+	put_character_Expect('-');
+	get_character_ExpectAndReturn('4');
+	put_character_Expect('4');
+	get_character_ExpectAndReturn(KEY_ENTER);
 
 	//run
-	// main_command_prompt();
-	// main_command_prompt();
-	// main_command_prompt();
-	// TEST_ASSERT_EQUAL_STRING("3-4", hb->latest);
-	// TEST_ASSERT_EQUAL_STRING("abc", hb->end);
-// }	
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	TEST_ASSERT_EQUAL_STRING("abc", hb->buffer[0]);
+	TEST_ASSERT_EQUAL_STRING("1+2", hb->buffer[1]);
+	TEST_ASSERT_EQUAL_STRING("3-4", hb->buffer[2]);
+	TEST_ASSERT_EQUAL_STRING("abc", hb->buffer[0]);
+	TEST_ASSERT_EQUAL_STRING("abc", hb->buffer[0]);
+}	
 
 
 
-// /* Given strings of abc  def  ghi  are already inside history buffer
- // * Now arrow up key is pressed.
- // * Expect:
- // *			ghi		return and stored into user_input
- // * 			
- // */
-// void test_given_abc_def_ghi_are_inside_history_buffer_when_arrow_up_is_pressed_ghi_should_return_to_user_input()
-// {
-
-	// CEXCEPTION_T error;
-	// initialize_historybuffer(3);			//initialize history buffer
+/* Given strings of abc  def  ghi  are already inside history buffer
+ * Now arrow up key is pressed.
+ * Expect:
+ *			ghi		return and stored into user_input
+ * 			
+ */
+void test_given_abc_def_ghi_are_inside_history_buffer_when_arrow_up_is_pressed_ghi_should_return_to_user_input()
+{
+	initialize_historybuffer(3);			//initialize history buffer
 	
 	//mock
-	// get_character_ExpectAndReturn('a');
-	// put_character_Expect('a');
-	// get_character_ExpectAndReturn('b');
-	// put_character_Expect('b');
-	// get_character_ExpectAndReturn('c');
-	// put_character_Expect('c');
-	// get_character_ExpectAndReturn(KEY_ENTER);
-	// get_character_ExpectAndReturn('d');
-	// put_character_Expect('d');
-	// get_character_ExpectAndReturn('e');
-	// put_character_Expect('e');
-	// get_character_ExpectAndReturn('f');
-	// put_character_Expect('f');
-	// get_character_ExpectAndReturn(KEY_ENTER);
-	// get_character_ExpectAndReturn('g');
-	// put_character_Expect('g');
-	// get_character_ExpectAndReturn('h');
-	// put_character_Expect('h');
-	// get_character_ExpectAndReturn('i');
-	// put_character_Expect('i');
-	// get_character_ExpectAndReturn(KEY_ENTER);
-	// get_character_ExpectAndReturn(ESCAPECODE2);
-	// get_character_ExpectAndReturn(ARROW_UP);
+	get_character_ExpectAndReturn('a');
+	put_character_Expect('a');
+	get_character_ExpectAndReturn('b');
+	put_character_Expect('b');
+	get_character_ExpectAndReturn('c');
+	put_character_Expect('c');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('d');
+	put_character_Expect('d');
+	get_character_ExpectAndReturn('e');
+	put_character_Expect('e');
+	get_character_ExpectAndReturn('f');
+	put_character_Expect('f');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('g');
+	put_character_Expect('g');
+	get_character_ExpectAndReturn('h');
+	put_character_Expect('h');
+	get_character_ExpectAndReturn('i');
+	put_character_Expect('i');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_UP);
 
 	//run
-	// Try
-	// {
-		// main_command_prompt();
-		// main_command_prompt();
-		// main_command_prompt();
-		// main_command_prompt();
-		// TEST_ASSERT_EQUAL_STRING("ghi", user_input);
-		
-	// }Catch(error){
-		
-		// TEST_ASSERT_EQUAL(ERR_NO_MORE_PREVIOUS,error);
-		// TEST_FAIL_MESSAGE("Do not expect error to be generated");
-	// }
-// }
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	TEST_ASSERT_EQUAL_STRING("ghi", user_input);
+}
 
 
 
 
-// /* Given strings of abc  def  ghi  are already inside history buffer
- // * Now arrow up key is pressed twice
- // * Expect:
- // *			def	return and stored into user_input
- // * 			
- // */
-// void test_given_abc_def_ghi_are_inside_history_buffer_when_arrow_up_is_pressed_twice_def_should_return_to_user_input()
-// {
-	// CEXCEPTION_T error;
-	// initialize_historybuffer(3);			//initialize history buffer
+/* Given strings of abc  def  ghi  are already inside history buffer
+ * Now arrow up key is pressed twice
+ * Expect:
+ *			def	return and stored into user_input
+ * 			
+ */
+void test_given_abc_def_ghi_are_inside_history_buffer_when_arrow_up_is_pressed_twice_def_should_return_to_user_input()
+{
+	initialize_historybuffer(3);			//initialize history buffer
 		
 	//mock
-	// get_character_ExpectAndReturn('a');
-	// put_character_Expect('a');
-	// get_character_ExpectAndReturn('b');
-	// put_character_Expect('b');
-	// get_character_ExpectAndReturn('c');
-	// put_character_Expect('c');
-	// get_character_ExpectAndReturn(KEY_ENTER);
-	// get_character_ExpectAndReturn('d');
-	// put_character_Expect('d');
-	// get_character_ExpectAndReturn('e');
-	// put_character_Expect('e');
-	// get_character_ExpectAndReturn('f');
-	// put_character_Expect('f');
-	// get_character_ExpectAndReturn(KEY_ENTER);
-	// get_character_ExpectAndReturn('g');
-	// put_character_Expect('g');
-	// get_character_ExpectAndReturn('h');
-	// put_character_Expect('h');
-	// get_character_ExpectAndReturn('i');
-	// put_character_Expect('i');
-	// get_character_ExpectAndReturn(KEY_ENTER);
-	// get_character_ExpectAndReturn(ESCAPECODE2);
-	// get_character_ExpectAndReturn(ARROW_UP);
-	// get_character_ExpectAndReturn(ESCAPECODE2);
-	// get_character_ExpectAndReturn(ARROW_UP);
+	get_character_ExpectAndReturn('a');
+	put_character_Expect('a');
+	get_character_ExpectAndReturn('b');
+	put_character_Expect('b');
+	get_character_ExpectAndReturn('c');
+	put_character_Expect('c');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('d');
+	put_character_Expect('d');
+	get_character_ExpectAndReturn('e');
+	put_character_Expect('e');
+	get_character_ExpectAndReturn('f');
+	put_character_Expect('f');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('g');
+	put_character_Expect('g');
+	get_character_ExpectAndReturn('h');
+	put_character_Expect('h');
+	get_character_ExpectAndReturn('i');
+	put_character_Expect('i');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_UP);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_UP);
 
 	//run
-
-	// Try
-	// {
-		// main_command_prompt();
-		// main_command_prompt();
-		// main_command_prompt();
-		// main_command_prompt();
-		// main_command_prompt();
-		// TEST_ASSERT_EQUAL_STRING("def", user_input);
-		
-	// }Catch(error){
-		
-		// TEST_ASSERT_EQUAL(ERR_NO_MORE_PREVIOUS,error);
-		// TEST_FAIL_MESSAGE("Do not expect error to be generated");
-	// }
-
-// }
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	TEST_ASSERT_EQUAL_STRING("def", user_input);
+}
 
 
 
 
-// /* Given strings of abc  def  ghi  are already inside history buffer
- // * Now arrow up key is pressed four times
- // * Expect:
- // *			NO_MORE_PREVIOUS error to be throw
- // * 			
- // */
-// void test_given_abc_def_ghi_are_inside_history_buffer_when_arrow_up_is_pressed_four_times_should_throw_error()
-// {
-	// CEXCEPTION_T error;
-	// initialize_historybuffer(3);			//initialize history buffer
+/* Given strings of abc  def  ghi  are already inside history buffer
+ * Now arrow up key is pressed four times
+ * Expect:
+ *			abc is returned
+ * 			
+ */
+void test_given_abc_def_ghi_are_inside_history_buffer_when_arrow_up_is_pressed_four_times_should_throw_error()
+{
+	initialize_historybuffer(3);			//initialize history buffer
 		
 	//mock
-	// get_character_ExpectAndReturn('a');
-	// put_character_Expect('a');
-	// get_character_ExpectAndReturn('b');
-	// put_character_Expect('b');
-	// get_character_ExpectAndReturn('c');
-	// put_character_Expect('c');
-	// get_character_ExpectAndReturn(KEY_ENTER);
-	// get_character_ExpectAndReturn('d');
-	// put_character_Expect('d');
-	// get_character_ExpectAndReturn('e');
-	// put_character_Expect('e');
-	// get_character_ExpectAndReturn('f');
-	// put_character_Expect('f');
-	// get_character_ExpectAndReturn(KEY_ENTER);
-	// get_character_ExpectAndReturn('g');
-	// put_character_Expect('g');
-	// get_character_ExpectAndReturn('h');
-	// put_character_Expect('h');
-	// get_character_ExpectAndReturn('i');
-	// put_character_Expect('i');
-	// get_character_ExpectAndReturn(KEY_ENTER);
-	// get_character_ExpectAndReturn(ESCAPECODE2);
-	// get_character_ExpectAndReturn(ARROW_UP);
-	// get_character_ExpectAndReturn(ESCAPECODE2);
-	// get_character_ExpectAndReturn(ARROW_UP);
-	// get_character_ExpectAndReturn(ESCAPECODE2);
-	// get_character_ExpectAndReturn(ARROW_UP);
-	// get_character_ExpectAndReturn(ESCAPECODE2);
-	// get_character_ExpectAndReturn(ARROW_UP);
+	get_character_ExpectAndReturn('a');
+	put_character_Expect('a');
+	get_character_ExpectAndReturn('b');
+	put_character_Expect('b');
+	get_character_ExpectAndReturn('c');
+	put_character_Expect('c');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('d');
+	put_character_Expect('d');
+	get_character_ExpectAndReturn('e');
+	put_character_Expect('e');
+	get_character_ExpectAndReturn('f');
+	put_character_Expect('f');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('g');
+	put_character_Expect('g');
+	get_character_ExpectAndReturn('h');
+	put_character_Expect('h');
+	get_character_ExpectAndReturn('i');
+	put_character_Expect('i');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_UP);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_UP);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_UP);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_UP);
 
 	//run
-	// Try
-	// {
-		// main_command_prompt();
-		// main_command_prompt();
-		// main_command_prompt();
-		// main_command_prompt();
-		// TEST_ASSERT_EQUAL_STRING("ghi", user_input);
-		// main_command_prompt();
-		// TEST_ASSERT_EQUAL_STRING("def", user_input);
-		// main_command_prompt();
-		// TEST_ASSERT_EQUAL_STRING("abc", user_input);
-		// main_command_prompt();
-		// TEST_FAIL_MESSAGE("Expect error to be generated");
-			
-	// }Catch(error){
-		
-		// TEST_ASSERT_EQUAL(ERR_NO_MORE_PREVIOUS,error);
-		// printf("Error generated : NO_MORE_PREVIOUS");
-	// }
-// }
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	TEST_ASSERT_EQUAL_STRING("ghi", user_input);
+	main_command_prompt();
+	TEST_ASSERT_EQUAL_STRING("def", user_input);
+	main_command_prompt();
+	TEST_ASSERT_EQUAL_STRING("abc", user_input);
+	main_command_prompt();
+	TEST_ASSERT_EQUAL_STRING("abc", user_input);
+}
 
 
 
-// /* Given strings of abc  def  ghi  are already inside history buffer
- // * Now arrow up key is pressed twice
- // * Then arrow down is pressed once
- // * Expect:
- // *			ghi return and store in user_input
- // * 			
- // */
-// void test_given_abc_def_ghi_are_inside_history_buffer_when_arrow_up_is_pressed_twice_arrow_down_press_once_ghi_should_store_in_user_input()
-// {
-	// CEXCEPTION_T error;
-	// initialize_historybuffer(3);			//initialize history buffer
+/* Given strings of abc  def  ghi  are already inside history buffer
+ * Now arrow up key is pressed twice
+ * Then arrow down is pressed once
+ * Expect:
+ *			ghi return and store in user_input
+ * 			
+ */
+void test_given_abc_def_ghi_are_inside_history_buffer_when_arrow_up_is_pressed_twice_arrow_down_press_once_ghi_should_store_in_user_input()
+{
+	initialize_historybuffer(3);			//initialize history buffer
 		
 	//mock
-	// get_character_ExpectAndReturn('a');
-	// put_character_Expect('a');
-	// get_character_ExpectAndReturn('b');
-	// put_character_Expect('b');
-	// get_character_ExpectAndReturn('c');
-	// put_character_Expect('c');
-	// get_character_ExpectAndReturn(KEY_ENTER);
-	// get_character_ExpectAndReturn('d');
-	// put_character_Expect('d');
-	// get_character_ExpectAndReturn('e');
-	// put_character_Expect('e');
-	// get_character_ExpectAndReturn('f');
-	// put_character_Expect('f');
-	// get_character_ExpectAndReturn(KEY_ENTER);
-	// get_character_ExpectAndReturn('g');
-	// put_character_Expect('g');
-	// get_character_ExpectAndReturn('h');
-	// put_character_Expect('h');
-	// get_character_ExpectAndReturn('i');
-	// put_character_Expect('i');
-	// get_character_ExpectAndReturn(KEY_ENTER);
-	// get_character_ExpectAndReturn(ESCAPECODE2);
-	// get_character_ExpectAndReturn(ARROW_UP);
-	// get_character_ExpectAndReturn(ESCAPECODE2);
-	// get_character_ExpectAndReturn(ARROW_UP);
-	// get_character_ExpectAndReturn(ESCAPECODE2);
-	// get_character_ExpectAndReturn(ARROW_DOWN);
+	get_character_ExpectAndReturn('a');
+	put_character_Expect('a');
+	get_character_ExpectAndReturn('b');
+	put_character_Expect('b');
+	get_character_ExpectAndReturn('c');
+	put_character_Expect('c');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('d');
+	put_character_Expect('d');
+	get_character_ExpectAndReturn('e');
+	put_character_Expect('e');
+	get_character_ExpectAndReturn('f');
+	put_character_Expect('f');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('g');
+	put_character_Expect('g');
+	get_character_ExpectAndReturn('h');
+	put_character_Expect('h');
+	get_character_ExpectAndReturn('i');
+	put_character_Expect('i');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_UP);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_UP);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_DOWN);
 
 	//run
-	// Try
-	// {
-		// main_command_prompt();
-		// main_command_prompt();
-		// main_command_prompt();
-		// main_command_prompt();
-		// main_command_prompt();
-		// main_command_prompt();
-		// TEST_ASSERT_EQUAL_STRING("ghi", user_input);
-				
-	// }Catch(error){
-		
-		// TEST_ASSERT_EQUAL(ERR_NO_MORE_PREVIOUS,error);
-		// TEST_FAIL_MESSAGE("Do not expect error to be generated");
-	// }
-// }
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	TEST_ASSERT_EQUAL_STRING("ghi", user_input);
+}
 
 
 
 
-// /* Given strings of abc  def  ghi  are already inside history buffer
- // * Now arrow up key is pressed once
- // * Then arrow down is pressed twice
- // * Expect:
- // *			NO_MORE_NEXT error to be throw
- // * 			
- // */
-// void test_given_abc_def_ghi_are_inside_history_buffer_when_arrow_up_is_pressed_once_arrow_down_press_twice_should_throw_error()
-// {
-	// CEXCEPTION_T error;
-	// initialize_historybuffer(3);			//initialize history buffer
+/* Given strings of abc  def  ghi  are already inside history buffer
+ * Type ggwp but no enter first
+ * Now arrow up key is pressed once
+ * Then arrow down is pressed once
+ * Expect:
+ *			user_input to be ggwp
+ * 			
+ */
+void test_handle_ARROWUP_and_handle_ARROWUP()
+{
+	initialize_historybuffer(3);			//initialize history buffer
 		
 	//mock
-	// get_character_ExpectAndReturn('a');
-	// put_character_Expect('a');
-	// get_character_ExpectAndReturn('b');
-	// put_character_Expect('b');
-	// get_character_ExpectAndReturn('c');
-	// put_character_Expect('c');
-	// get_character_ExpectAndReturn(KEY_ENTER);
-	// get_character_ExpectAndReturn('d');
-	// put_character_Expect('d');
-	// get_character_ExpectAndReturn('e');
-	// put_character_Expect('e');
-	// get_character_ExpectAndReturn('f');
-	// put_character_Expect('f');
-	// get_character_ExpectAndReturn(KEY_ENTER);
-	// get_character_ExpectAndReturn('g');
-	// put_character_Expect('g');
-	// get_character_ExpectAndReturn('h');
-	// put_character_Expect('h');
-	// get_character_ExpectAndReturn('i');
-	// put_character_Expect('i');
-	// get_character_ExpectAndReturn(KEY_ENTER);
-	// get_character_ExpectAndReturn(ESCAPECODE2);
-	// get_character_ExpectAndReturn(ARROW_UP);
-	// get_character_ExpectAndReturn(ESCAPECODE2);
-	// get_character_ExpectAndReturn(ARROW_DOWN);
-	// get_character_ExpectAndReturn(ESCAPECODE2);
-	// get_character_ExpectAndReturn(ARROW_DOWN);
+	get_character_ExpectAndReturn('a');
+	put_character_Expect('a');
+	get_character_ExpectAndReturn('b');
+	put_character_Expect('b');
+	get_character_ExpectAndReturn('c');
+	put_character_Expect('c');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('d');
+	put_character_Expect('d');
+	get_character_ExpectAndReturn('e');
+	put_character_Expect('e');
+	get_character_ExpectAndReturn('f');
+	put_character_Expect('f');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('g');
+	put_character_Expect('g');
+	get_character_ExpectAndReturn('h');
+	put_character_Expect('h');
+	get_character_ExpectAndReturn('i');
+	put_character_Expect('i');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('g');
+	put_character_Expect('g');
+	get_character_ExpectAndReturn('g');
+	put_character_Expect('g');
+	get_character_ExpectAndReturn('w');
+	put_character_Expect('w');
+	get_character_ExpectAndReturn('p');
+	put_character_Expect('p');
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_UP);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_DOWN);
 
-	//run
-	// Try
-	// {
-		// main_command_prompt();
-		// main_command_prompt();
-		// main_command_prompt();
-		// main_command_prompt();
-		// main_command_prompt();
-		// main_command_prompt();
-		// TEST_FAIL_MESSAGE("Expect error to be generated");
-					
-	// }Catch(error){
-		
-		// TEST_ASSERT_EQUAL(ERR_NO_MORE_NEXT,error);
-		// printf("Error generated : NO_MORE_NEXT");
-	// }
-// }
-
-
-
-// /* Given strings of abc  def  ghi  are already inside history buffer
- // * Type ggwp but no enter first
- // * Now arrow up key is pressed once
- // * Then arrow down is pressed once
- // * Expect:
- // *			user_input to be ggwp
- // * 			
- // */
-// void test_handle_ARROWUP_and_handle_ARROWUP()
-// {
-	// initialize_historybuffer(3);			//initialize history buffer
-		
-	//mock
-	// get_character_ExpectAndReturn('a');
-	// put_character_Expect('a');
-	// get_character_ExpectAndReturn('b');
-	// put_character_Expect('b');
-	// get_character_ExpectAndReturn('c');
-	// put_character_Expect('c');
-	// get_character_ExpectAndReturn(KEY_ENTER);
-	// get_character_ExpectAndReturn('d');
-	// put_character_Expect('d');
-	// get_character_ExpectAndReturn('e');
-	// put_character_Expect('e');
-	// get_character_ExpectAndReturn('f');
-	// put_character_Expect('f');
-	// get_character_ExpectAndReturn(KEY_ENTER);
-	// get_character_ExpectAndReturn('g');
-	// put_character_Expect('g');
-	// get_character_ExpectAndReturn('h');
-	// put_character_Expect('h');
-	// get_character_ExpectAndReturn('i');
-	// put_character_Expect('i');
-	// get_character_ExpectAndReturn(KEY_ENTER);
-	// get_character_ExpectAndReturn('g');
-	// put_character_Expect('g');
-	// get_character_ExpectAndReturn('g');
-	// put_character_Expect('g');
-	// get_character_ExpectAndReturn('w');
-	// put_character_Expect('w');
-	// get_character_ExpectAndReturn('p');
-	// put_character_Expect('p');
-	// get_character_ExpectAndReturn(ESCAPECODE2);
-	// get_character_ExpectAndReturn(ARROW_UP);
-	// get_character_ExpectAndReturn(ESCAPECODE2);
-	// get_character_ExpectAndReturn(ARROW_DOWN);
-
-	//run
-	// main_command_prompt();
-	// main_command_prompt();
-	// main_command_prompt();
-	// main_command_prompt();
-	// main_command_prompt();
-	// printf("%s\n" , read);
-	// printf("%s\n" , move_read_ptr);
-	//TEST_ASSERT_EQUAL_STRING("ggwp", user_input);
 	
-// }
+	//run
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	TEST_ASSERT_EQUAL_STRING("ggwp", user_input);
+}
 
 
 
-// void test_handle_PAGEUP_given_123_456_789_000_when_pageup_is_pressed_should_get_123()
-// {
-	// CEXCEPTION_T error;
-	// initialize_historybuffer(5);			//initialize history buffer
+
+void test_handle_PAGEUP_given_123_456_789_000_when_pagedown_is_pressed_should_get_123()
+{
+	initialize_historybuffer(5);			//initialize history buffer
 		
 	//mock
-	// get_character_ExpectAndReturn('1');
-	// put_character_Expect('1');
-	// get_character_ExpectAndReturn('2');
-	// put_character_Expect('2');
-	// get_character_ExpectAndReturn('3');
-	// put_character_Expect('3');
-	// get_character_ExpectAndReturn(KEY_ENTER);
-	// get_character_ExpectAndReturn('4');
-	// put_character_Expect('4');
-	// get_character_ExpectAndReturn('5');
-	// put_character_Expect('5');
-	// get_character_ExpectAndReturn('6');
-	// put_character_Expect('6');
-	// get_character_ExpectAndReturn(KEY_ENTER);
-	// get_character_ExpectAndReturn('7');
-	// put_character_Expect('7');
-	// get_character_ExpectAndReturn('8');
-	// put_character_Expect('8');
-	// get_character_ExpectAndReturn('9');
-	// put_character_Expect('9');
-	// get_character_ExpectAndReturn(KEY_ENTER);
-	// get_character_ExpectAndReturn('0');
-	// put_character_Expect('0');
-	// get_character_ExpectAndReturn('0');
-	// put_character_Expect('0');
-	// get_character_ExpectAndReturn('0');
-	// put_character_Expect('0');
-	// get_character_ExpectAndReturn(KEY_ENTER);
-	// get_character_ExpectAndReturn(ESCAPECODE2);
-	// get_character_ExpectAndReturn(KEY_PAGEUP);
+	get_character_ExpectAndReturn('1');
+	put_character_Expect('1');
+	get_character_ExpectAndReturn('2');
+	put_character_Expect('2');
+	get_character_ExpectAndReturn('3');
+	put_character_Expect('3');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('4');
+	put_character_Expect('4');
+	get_character_ExpectAndReturn('5');
+	put_character_Expect('5');
+	get_character_ExpectAndReturn('6');
+	put_character_Expect('6');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('7');
+	put_character_Expect('7');
+	get_character_ExpectAndReturn('8');
+	put_character_Expect('8');
+	get_character_ExpectAndReturn('9');
+	put_character_Expect('9');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('0');
+	put_character_Expect('0');
+	get_character_ExpectAndReturn('0');
+	put_character_Expect('0');
+	get_character_ExpectAndReturn('0');
+	put_character_Expect('0');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(KEY_PAGEDOWN);
 
 	//run
-	// Try
-	// {
-		// main_command_prompt();
-		// main_command_prompt();
-		// main_command_prompt();
-		// main_command_prompt();
-		// main_command_prompt();
-		// TEST_ASSERT_EQUAL_STRING("123", user_input);
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	TEST_ASSERT_EQUAL_STRING("123", user_input);
+}
 
-	// }Catch(error){
+
+
+
+void test_handle_PAGEUP_given_123_456_789_000_when_pageup_is_pressed_should_get_000()
+{
+	initialize_historybuffer(5);			//initialize history buffer
 		
-		// TEST_ASSERT_EQUAL(ERR_NO_MORE_PREVIOUS,error);
-		// TEST_FAIL_MESSAGE("Do not expect error to be generated");
-	// }
-// }
+	//mock
+	get_character_ExpectAndReturn('1');
+	put_character_Expect('1');
+	get_character_ExpectAndReturn('2');
+	put_character_Expect('2');
+	get_character_ExpectAndReturn('3');
+	put_character_Expect('3');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('4');
+	put_character_Expect('4');
+	get_character_ExpectAndReturn('5');
+	put_character_Expect('5');
+	get_character_ExpectAndReturn('6');
+	put_character_Expect('6');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('7');
+	put_character_Expect('7');
+	get_character_ExpectAndReturn('8');
+	put_character_Expect('8');
+	get_character_ExpectAndReturn('9');
+	put_character_Expect('9');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('0');
+	put_character_Expect('0');
+	get_character_ExpectAndReturn('0');
+	put_character_Expect('0');
+	get_character_ExpectAndReturn('0');
+	put_character_Expect('0');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(KEY_PAGEUP);
+
+	//run
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	TEST_ASSERT_EQUAL_STRING("000", user_input);
+}

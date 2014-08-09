@@ -5,7 +5,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-char user_input[MAX_BUFFER_SIZE];
+
+char latest_input[1024];
 
 /*
  * Initialize the historybuffer
@@ -104,17 +105,19 @@ char *historyBufferReadPrevious(HistoryBuffer *hb)
 		return hb->buffer[hb->startIndex];
 	
 	hb->currentIndex--;
-	
-	if ( hb->currentIndex != latest)	// if the currentIndex is not pointed to latest, then reset the next status to 0
-		next_status = 0;
-	
+		
 	if( hb->currentIndex < 0	&&	hb->buffer[hb->startIndex] == NULL)
 	{
 		hb->currentIndex = 0;
-		return user_input;
+		return latest_input;
 	}
 	
 	hb->currentIndex = readjustIndex(hb , hb->currentIndex);
+	
+	if ( hb->currentIndex != latest)	// if the currentIndex is not pointed to latest, then reset the next status to 0
+		next_status = 0;
+	else	
+		next_status = 1;
 	
 	if( hb->currentIndex == hb->startIndex)
 		previous_status = 1;
@@ -142,7 +145,7 @@ char *historyBufferReadNext(HistoryBuffer *hb)
 	if ( next_status == 1)
 	{
 		hb->currentIndex = hb->startIndex;
-		return user_input;
+		return latest_input;
 	}
 	
 	hb->currentIndex++;

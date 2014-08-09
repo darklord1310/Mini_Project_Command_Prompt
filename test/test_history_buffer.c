@@ -1,8 +1,7 @@
 #include "unity.h"
 #include "history_buffer.h"
 
-
-char user_input[1024];
+char latest_input[1024];
 
 void setUp(void)
 {
@@ -152,13 +151,13 @@ void test_historyBufferReadPrevious_given_1plus6_should_return_1plus6_when_read_
 
 
 //buffer no overwrite
-void test_historyBufferReadPrevious_given_empty_and_user_input_is_1plus6_should_return_1plus6_when_read()
+void test_historyBufferReadPrevious_given_empty_and_latest_input_is_1plus6_should_return_1plus6_when_read()
 {
 	HistoryBuffer *hb = historyBufferNew(LENGTH_OF_BUFFER);
 	char *string_return;
-	user_input[0] = '1';
-	user_input[1] = '+';
-	user_input[2] = '6';
+	latest_input[0] = '1';
+	latest_input[1] = '+';
+	latest_input[2] = '6';
 	
 	string_return = historyBufferReadPrevious(hb);
 	TEST_ASSERT_EQUAL_STRING("1+6", string_return);
@@ -250,9 +249,9 @@ void test_historyBufferReadNext_given_1plus6_2plus3_4plus5_should_return_4plus5_
 	historyBufferAdd(hb, "1+6");
 	historyBufferAdd(hb, "2+3");
 	historyBufferAdd(hb, "4+5");
-	user_input[0] = '0';
-	user_input[1] = '+';
-	user_input[2] = '6';
+	latest_input[0] = '0';
+	latest_input[1] = '+';
+	latest_input[2] = '6';
 	
 	string_return = historyBufferReadPrevious(hb);
 	string_return = historyBufferReadPrevious(hb);
@@ -265,7 +264,7 @@ void test_historyBufferReadNext_given_1plus6_2plus3_4plus5_should_return_4plus5_
 	TEST_ASSERT_EQUAL(2, hb->currentIndex);		
 	TEST_ASSERT_EQUAL_STRING("4+5" , string_return);
 	string_return = historyBufferReadNext(hb);	
-	TEST_ASSERT_EQUAL(hb->startIndex, hb->currentIndex);		
+	TEST_ASSERT_EQUAL(hb->startIndex, hb->currentIndex);
 	TEST_ASSERT_EQUAL_STRING("0+6" , string_return);
 	historyBufferDel(hb);
 }

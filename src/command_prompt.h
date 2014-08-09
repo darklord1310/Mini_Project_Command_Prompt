@@ -38,18 +38,29 @@
 #define CODE_ESCAPE			 0xFF1B
 
 typedef int Keycode;
-typedef enum {ERR_EMPTY_USER_INPUT}ErrCode;
 
 
 extern char user_input[MAX_BUFFER_SIZE];
+extern char latest_input[MAX_BUFFER_SIZE];
 extern int length_of_input;
 
 #ifndef history_buffer_H
 #define history_buffer_H
 
+typedef struct
+{
+	char **buffer;
+	int length;
+	int currentIndex;
+	int latestIndex;
+	int startIndex;
+
+}HistoryBuffer;
+
+int previous_status;
+int next_status;
 
 #endif // history_buffer_H
-
 
 
 
@@ -89,9 +100,9 @@ extern int length_of_input;
 Keycode get_key_press();  				   // get key press 
 Keycode is_special_key(int key_code);	   // check whether input is special key or not
 Keycode user_input_interface();
+void copystringtocharaary(char array[] , char *string);
 void mockspecialkeys(int key_code);
 void check_special_keys(int key_code);
-void dumpBuffer();
 void handle_BACKSPACE();
 void handle_ARROWUP();
 void handle_ARROWDOWN();
@@ -107,6 +118,6 @@ void handle_ENTER();
 void handle_ESCAPE();
 void initialize_historybuffer(int length_of_buffer);
 void main_command_prompt();
-
+HistoryBuffer *hb;
 
 #endif // command_prompt_H
