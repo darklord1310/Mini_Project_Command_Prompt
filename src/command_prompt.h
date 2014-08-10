@@ -1,9 +1,9 @@
 #ifndef command_prompt_H
 #define command_prompt_H
-#define ARROW_UP 			  72		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define ARROW_DOWN  		  80		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define ARROW_LEFT 			  75		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
-#define ARROW_RIGHT 		  77		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
+#define ARROW_UP 			  72		// will output 2 bytes instead of 1 byte when press, first byte is  224
+#define ARROW_DOWN  		  80		// will output 2 bytes instead of 1 byte when press, first byte is  224
+#define ARROW_LEFT 			  75		// will output 2 bytes instead of 1 byte when press, first byte is  224
+#define ARROW_RIGHT 		  77		// will output 2 bytes instead of 1 byte when press, first byte is  224
 #define KEY_DELETE  		  83		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
 #define KEY_INSERT 	 		  82		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
 #define KEY_PAGEUP  		  73		// will output 2 bytes instead of 1 byte when press, first byte is either 0 or 224
@@ -43,7 +43,6 @@ int cursor;
 
 extern char user_input[MAX_BUFFER_SIZE];
 extern char latest_input[MAX_BUFFER_SIZE];
-extern int length_of_input;
 
 #ifndef history_buffer_H
 #define history_buffer_H
@@ -120,5 +119,6 @@ void handle_ENTER();
 void handle_ESCAPE();
 void initialize_historybuffer(int length_of_buffer);
 void main_command_prompt();
+void readjustcursor();
 
 #endif // command_prompt_H

@@ -8,8 +8,6 @@
 
 char user_input[MAX_BUFFER_SIZE];
 char latest_input[MAX_BUFFER_SIZE];
-int	length_of_input = 0;
-
 
 
 /*  To check for the input is special key or not
@@ -30,7 +28,8 @@ Keycode is_special_key(int key_code)
 			key_code = (upper_byte|lower_byte);
 			if ( key_code != CODE_ARROWUP && key_code != CODE_ARROWDOWN && key_code != CODE_ARROWLEFT && key_code != CODE_ARROWRIGHT && 
 				 key_code != CODE_DELETE1 && key_code != CODE_DELETE2 && key_code != CODE_INSERT1 && key_code != CODE_INSERT2 && 
-				 key_code != CODE_PAGEUP1 && key_code != CODE_PAGEUP2 && key_code != CODE_PAGEDOWN1 && key_code != CODE_PAGEDOWN2)
+				 key_code != CODE_PAGEUP1 && key_code != CODE_PAGEUP2 && key_code != CODE_PAGEDOWN1 && key_code != CODE_PAGEDOWN2 &&
+				 key_code != CODE_HOME1   && key_code != CODE_HOME2   && key_code != CODE_END1 		&& key_code != CODE_END2)
 				return 0;
 			else	
 				return key_code;
@@ -92,11 +91,13 @@ Keycode user_input_interface()
 			return status;
 		}
 		
-		user_input[length_of_input] = key_code;
-		put_character(user_input[length_of_input]);
-		length_of_input++;
-		cursor = length_of_input;
-		user_input[length_of_input] = '\0';
+		if(user_input[cursor] == '\0')
+			user_input[cursor] = '0';
+		
+		user_input[cursor] = key_code;
+		put_character(user_input[cursor]);
+		cursor++;
+		user_input[cursor] = '\0';
 		copystringtocharaary(latest_input,user_input);
 	}
 }
@@ -287,23 +288,62 @@ void mockspecialkeys(int key_code)
 
 
 
+//adjust the cursor to the end of the user input
+void readjustcursor()
+{
+	int i;
+	
+	while ( user_input[i] != '\0')
+	{
+		i++;
+	}
+	
+	cursor = i;
+}
+
+
+
+
 /*  To perform backspace
  * 			
  */
 void handle_BACKSPACE()
 {
-	int j=0 , length=0;
+	int j=0 , length=0, x=-1, y=0;
 	
-	while ( user_input[j] != '\0')
+	if(user_input[cursor] == '\0')
 	{
-		length++;
-		j++;
-	}
-	
-	if ( length == 0);
-	
+		while ( user_input[j] != '\0')
+		{
+			length++;
+			j++;
+		}
 	user_input[length-1] = '\0';
-	length_of_input--;
+	cursor--;
+	
+	if(cursor < 0)
+		cursor=0;
+	}
+	else
+	{
+		if(cursor != 0)
+		{
+			while(1)
+			{
+				user_input[cursor+x] = user_input[cursor+y];
+				x++;
+				y++;
+				if(user_input[cursor+y] == '\0')
+				{
+					user_input[cursor+x] = '\0';
+					break;
+				}
+			}
+			cursor--;
+			if(cursor < 0)
+				cursor=0;
+		}
+	}
 }
 
 
@@ -335,7 +375,7 @@ void copystringtocharaary(char array[] , char *string)
 void handle_ENTER()
 {
 	historyBufferAdd(hb, user_input);
-	length_of_input = 0;		// has to reinitialize length of input to 0 to get new input correctly
+	cursor = 0;		// has to reinitialize length of input to 0 to get new input correctly
 }
 
 
@@ -347,6 +387,7 @@ void handle_ARROWUP()
 
 	char *temp = historyBufferReadPrevious(hb);
 	copystringtocharaary(user_input, temp);
+	readjustcursor();
 }
 
 
@@ -359,6 +400,7 @@ void handle_ARROWDOWN()
 	char *temp;
 	temp = historyBufferReadNext(hb);
 	copystringtocharaary(user_input, temp);
+	readjustcursor();
 }
 
 
@@ -380,15 +422,17 @@ void handle_ARROWLEFT()
 
 void handle_HOME()
 {
+	cursor = 0;
 }
 
 
 void handle_DEL()
 {
+	user_input[cursor] = '\0';
 
 }
 
-void handle_PAGEUP()
+void handle_PAGEDOWN()
 {
 	if( hb->buffer[hb->startIndex] == NULL)
 		copystringtocharaary(user_input, latest_input);
@@ -401,7 +445,7 @@ void handle_PAGEUP()
 }
 
 
-void handle_PAGEDOWN()
+void handle_PAGEUP()
 {
 	if( hb->buffer[hb->startIndex] == NULL)
 		copystringtocharaary(user_input, latest_input);
@@ -421,7 +465,7 @@ void handle_INSERT()
 
 void handle_END()
 {
-
+	readjustcursor();
 }
 
 

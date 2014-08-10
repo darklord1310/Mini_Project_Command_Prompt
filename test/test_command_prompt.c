@@ -10,7 +10,7 @@
 
 void setUp(void)
 {
-	length_of_input = 0;	// the length of input must be zero at first
+	cursor = 0;	// the length of input must be zero at first
 	next_status = 0;
 	previous_status = 0;
 }
@@ -191,6 +191,7 @@ void test_handle_BACKSPACE_given_abcde_should_get_abcd()
 	// run
 	main_command_prompt();
 	TEST_ASSERT_EQUAL_STRING("abcd", user_input);
+	TEST_ASSERT_EQUAL(4, cursor);
 }
 
 
@@ -213,48 +214,112 @@ void test_handle_BACKSPACE_twice_given_abcde_should_get_abc()
 	put_character_Expect('e');
 	get_character_ExpectAndReturn(KEY_BACKSPACE);	
 	get_character_ExpectAndReturn(KEY_BACKSPACE);
-	// get_character_ExpectAndReturn('d');
-	// put_character_Expect('d');	
-	// get_character_ExpectAndReturn(KEY_ENTER);
 
 	// run
 	main_command_prompt();
 	main_command_prompt();
-	// main_command_prompt();
 	TEST_ASSERT_EQUAL_STRING("abc", user_input);
+	TEST_ASSERT_EQUAL(3, cursor);
+}
+
+
+
+// to test the handle backspace function when no more char should stay
+void test_handle_BACKSPACE_given_1plus2_when_backspace_four_times_should_get_cursor_is_0()
+{
+	
+	// mock
+	get_character_ExpectAndReturn('1');
+	put_character_Expect('1');
+	get_character_ExpectAndReturn('+');
+	put_character_Expect('+');
+	get_character_ExpectAndReturn('2');
+	put_character_Expect('2');
+	get_character_ExpectAndReturn(KEY_BACKSPACE);	
+	get_character_ExpectAndReturn(KEY_BACKSPACE);
+	get_character_ExpectAndReturn(KEY_BACKSPACE);
+	get_character_ExpectAndReturn(KEY_BACKSPACE);
+
+	// run
+	main_command_prompt();
+	TEST_ASSERT_EQUAL(2, cursor);
+	TEST_ASSERT_EQUAL_STRING("1+", user_input);
+	main_command_prompt();
+	TEST_ASSERT_EQUAL(1, cursor);
+	TEST_ASSERT_EQUAL_STRING("1", user_input);
+	main_command_prompt();
+	TEST_ASSERT_EQUAL_STRING("", user_input);
+	TEST_ASSERT_EQUAL(0, cursor);
+	main_command_prompt();
+	TEST_ASSERT_EQUAL_STRING("", user_input);
+	TEST_ASSERT_EQUAL(0, cursor);
+}
+
+
+
+
+// to test the handle backspace function given abc backspace once then enter char d should get abd
+void test_handle_BACKSPACE_given_abc_backspace_once_then_enter_d_should_get_abd()
+{
+	
+	// mock
+	get_character_ExpectAndReturn('a');
+	put_character_Expect('a');
+	get_character_ExpectAndReturn('b');
+	put_character_Expect('b');
+	get_character_ExpectAndReturn('c');
+	put_character_Expect('c');
+	get_character_ExpectAndReturn(KEY_BACKSPACE);	
+	get_character_ExpectAndReturn('d');
+	put_character_Expect('d');
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_LEFT);	// the key entered here is not important, just wanted to get out from the loop
+	
+	// run
+	main_command_prompt();
+	TEST_ASSERT_EQUAL_STRING("ab", user_input);
+	TEST_ASSERT_EQUAL(2, cursor);
+	main_command_prompt();
+	TEST_ASSERT_EQUAL_STRING("abd", user_input);
+	TEST_ASSERT_EQUAL(2, cursor);	//should be point at 3 but because of arrow left so point at 2
 
 }
 
 
 
-// to test the handle backspace function when empty input and try to backspace will throw error
-// void test_handle_BACKSPACE_thrice_given_ab_should_throw_error()
-// {
-	// CEXCEPTION_T error;
-		
+/* to test the handle backspace function given string abc 
+ * Cursor point at b
+ * backspace is pressed
+ * Expect:
+ *			user_input to be bc
+ */
+void test_handle_BACKSPACE_given_abc_cursor_at_b_backspace_should_get_bc()
+{
+	
 	// mock
-	// get_character_ExpectAndReturn('a');
-	// put_character_Expect('a');
-	// get_character_ExpectAndReturn('b');
-	// put_character_Expect('b');
-	// get_character_ExpectAndReturn(KEY_BACKSPACE);	
-	// get_character_ExpectAndReturn(KEY_BACKSPACE);
-	// get_character_ExpectAndReturn(KEY_BACKSPACE);		
+	get_character_ExpectAndReturn('a');
+	put_character_Expect('a');
+	get_character_ExpectAndReturn('b');
+	put_character_Expect('b');
+	get_character_ExpectAndReturn('c');
+	put_character_Expect('c');
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_LEFT);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_LEFT);
+	get_character_ExpectAndReturn(KEY_BACKSPACE);
+
 	
 	// run
-	// Try
-	// {
-		// main_command_prompt();
-		// main_command_prompt();
-		// main_command_prompt();
-		// TEST_FAIL_MESSAGE("Expected error to be generated");
-		
-	// }Catch(error){
-		
-		// TEST_ASSERT_EQUAL(ERR_EMPTY_USER_INPUT,error);
-		// printf("Error generated : ERR_EMPTY_USER_INPUT");
-	// }
-// }
+	main_command_prompt();
+	TEST_ASSERT_EQUAL(2, cursor);
+	main_command_prompt();
+	TEST_ASSERT_EQUAL(1, cursor);
+	main_command_prompt();
+	TEST_ASSERT_EQUAL(0, cursor);
+	TEST_ASSERT_EQUAL_STRING("bc", user_input);
+
+}
 
 
 
@@ -597,55 +662,7 @@ void test_handle_ARROWUP_and_handle_ARROWUP()
 
 
 
-void test_handle_PAGEUP_given_123_456_789_000_when_pagedown_is_pressed_should_get_123()
-{
-	initialize_historybuffer(5);			//initialize history buffer
-		
-	//mock
-	get_character_ExpectAndReturn('1');
-	put_character_Expect('1');
-	get_character_ExpectAndReturn('2');
-	put_character_Expect('2');
-	get_character_ExpectAndReturn('3');
-	put_character_Expect('3');
-	get_character_ExpectAndReturn(KEY_ENTER);
-	get_character_ExpectAndReturn('4');
-	put_character_Expect('4');
-	get_character_ExpectAndReturn('5');
-	put_character_Expect('5');
-	get_character_ExpectAndReturn('6');
-	put_character_Expect('6');
-	get_character_ExpectAndReturn(KEY_ENTER);
-	get_character_ExpectAndReturn('7');
-	put_character_Expect('7');
-	get_character_ExpectAndReturn('8');
-	put_character_Expect('8');
-	get_character_ExpectAndReturn('9');
-	put_character_Expect('9');
-	get_character_ExpectAndReturn(KEY_ENTER);
-	get_character_ExpectAndReturn('0');
-	put_character_Expect('0');
-	get_character_ExpectAndReturn('0');
-	put_character_Expect('0');
-	get_character_ExpectAndReturn('0');
-	put_character_Expect('0');
-	get_character_ExpectAndReturn(KEY_ENTER);
-	get_character_ExpectAndReturn(ESCAPECODE2);
-	get_character_ExpectAndReturn(KEY_PAGEDOWN);
-
-	//run
-	main_command_prompt();
-	main_command_prompt();
-	main_command_prompt();
-	main_command_prompt();
-	main_command_prompt();
-	TEST_ASSERT_EQUAL_STRING("123", user_input);
-}
-
-
-
-
-void test_handle_PAGEUP_given_123_456_789_000_when_pageup_is_pressed_should_get_000()
+void test_handle_PAGEUP_given_123_456_789_000_when_pageup_is_pressed_should_get_123()
 {
 	initialize_historybuffer(5);			//initialize history buffer
 		
@@ -680,6 +697,54 @@ void test_handle_PAGEUP_given_123_456_789_000_when_pageup_is_pressed_should_get_
 	get_character_ExpectAndReturn(KEY_ENTER);
 	get_character_ExpectAndReturn(ESCAPECODE2);
 	get_character_ExpectAndReturn(KEY_PAGEUP);
+
+	//run
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	TEST_ASSERT_EQUAL_STRING("123", user_input);
+}
+
+
+
+
+void test_handle_PAGEUP_given_123_456_789_000_when_pagedown_is_pressed_should_get_000()
+{
+	initialize_historybuffer(5);			//initialize history buffer
+		
+	//mock
+	get_character_ExpectAndReturn('1');
+	put_character_Expect('1');
+	get_character_ExpectAndReturn('2');
+	put_character_Expect('2');
+	get_character_ExpectAndReturn('3');
+	put_character_Expect('3');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('4');
+	put_character_Expect('4');
+	get_character_ExpectAndReturn('5');
+	put_character_Expect('5');
+	get_character_ExpectAndReturn('6');
+	put_character_Expect('6');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('7');
+	put_character_Expect('7');
+	get_character_ExpectAndReturn('8');
+	put_character_Expect('8');
+	get_character_ExpectAndReturn('9');
+	put_character_Expect('9');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn('0');
+	put_character_Expect('0');
+	get_character_ExpectAndReturn('0');
+	put_character_Expect('0');
+	get_character_ExpectAndReturn('0');
+	put_character_Expect('0');
+	get_character_ExpectAndReturn(KEY_ENTER);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(KEY_PAGEDOWN);
 
 	//run
 	main_command_prompt();
@@ -819,5 +884,66 @@ void test_handle_arrow_right_given_string_of_123_cursor_pointed_at_3_call_once_s
 	main_command_prompt();
 	main_command_prompt();
 	TEST_ASSERT_EQUAL(3 , cursor);
+	TEST_ASSERT_EQUAL('\0', user_input[cursor]);
+}
+
+
+
+
+void test_handle_HOME_given_123_cursor_is_at_2_when_home_is_press_should_get_cursor_is_0()
+{
+	initialize_historybuffer(3);			//initialize history buffer
+		
+	//mock
+	get_character_ExpectAndReturn('1');
+	put_character_Expect('1');
+	get_character_ExpectAndReturn('2');
+	put_character_Expect('2');
+	get_character_ExpectAndReturn('3');
+	put_character_Expect('3');
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_LEFT);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_LEFT);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(KEY_HOME);
+
+	//run
+	main_command_prompt();
+	main_command_prompt();
+	TEST_ASSERT_EQUAL(1 , cursor);
+	TEST_ASSERT_EQUAL('2', user_input[cursor]);
+	main_command_prompt();
+	TEST_ASSERT_EQUAL(0 , cursor);
+	TEST_ASSERT_EQUAL('1', user_input[cursor]);
+}
+
+
+
+
+void test_handle_END_given_123_cursor_is_at_2_when_END_is_press_should_get_cursor_is_3()
+{
+	initialize_historybuffer(3);			//initialize history buffer
+		
+	//mock
+	get_character_ExpectAndReturn('1');
+	put_character_Expect('1');
+	get_character_ExpectAndReturn('2');
+	put_character_Expect('2');
+	get_character_ExpectAndReturn('3');
+	put_character_Expect('3');
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_LEFT);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_LEFT);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(KEY_END);
+
+	//run
+	main_command_prompt();
+	main_command_prompt();
+	TEST_ASSERT_EQUAL(1 , cursor);
+	TEST_ASSERT_EQUAL('2', user_input[cursor]);
+	main_command_prompt();
 	TEST_ASSERT_EQUAL('\0', user_input[cursor]);
 }
