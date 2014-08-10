@@ -689,3 +689,135 @@ void test_handle_PAGEUP_given_123_456_789_000_when_pageup_is_pressed_should_get_
 	main_command_prompt();
 	TEST_ASSERT_EQUAL_STRING("000", user_input);
 }
+
+
+
+
+void test_handle_arrow_left_given_123_call_once_should_point_at_2()
+{
+	initialize_historybuffer(5);			//initialize history buffer
+		
+	//mock
+	get_character_ExpectAndReturn('1');
+	put_character_Expect('1');
+	get_character_ExpectAndReturn('2');
+	put_character_Expect('2');
+	get_character_ExpectAndReturn('3');
+	put_character_Expect('3');
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_LEFT);
+
+	//run
+	main_command_prompt();
+	TEST_ASSERT_EQUAL(2 , cursor);
+	TEST_ASSERT_EQUAL('3', user_input[cursor]);
+}
+
+
+
+
+void test_handle_arrow_left_given_123_call_twice_should_point_at_1()
+{
+	initialize_historybuffer(5);			//initialize history buffer
+		
+	//mock
+	get_character_ExpectAndReturn('1');
+	put_character_Expect('1');
+	get_character_ExpectAndReturn('2');
+	put_character_Expect('2');
+	get_character_ExpectAndReturn('3');
+	put_character_Expect('3');
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_LEFT);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_LEFT);
+
+	//run
+	main_command_prompt();
+	main_command_prompt();
+	TEST_ASSERT_EQUAL(1 , cursor);
+	TEST_ASSERT_EQUAL('2', user_input[cursor]);
+}
+
+
+
+// boundary test for handle_ARROWLEFT
+void test_handle_arrow_left_given_123_call_thrice_should_point_at_0()
+{
+	initialize_historybuffer(5);			//initialize history buffer
+		
+	//mock
+	get_character_ExpectAndReturn('1');
+	put_character_Expect('1');
+	get_character_ExpectAndReturn('2');
+	put_character_Expect('2');
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_LEFT);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_LEFT);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_LEFT);
+	
+	//run
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	TEST_ASSERT_EQUAL(0 , cursor);
+	TEST_ASSERT_EQUAL('1', user_input[cursor]);
+}
+
+
+
+void test_handle_arrow_right_given_string_of_123_cursor_pointed_at_1_call_once_should_point_at_2()
+{
+	initialize_historybuffer(3);			//initialize history buffer
+		
+	//mock
+	get_character_ExpectAndReturn('1');
+	put_character_Expect('1');
+	get_character_ExpectAndReturn('2');
+	put_character_Expect('2');
+	get_character_ExpectAndReturn('3');
+	put_character_Expect('3');
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_LEFT);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_LEFT);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_LEFT);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_RIGHT);
+
+	//run
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	TEST_ASSERT_EQUAL(1 , cursor);
+	TEST_ASSERT_EQUAL('2', user_input[cursor]);
+}
+
+
+
+void test_handle_arrow_right_given_string_of_123_cursor_pointed_at_3_call_once_should_point_at_next_input()
+{
+	initialize_historybuffer(3);			//initialize history buffer
+		
+	//mock
+	get_character_ExpectAndReturn('1');
+	put_character_Expect('1');
+	get_character_ExpectAndReturn('2');
+	put_character_Expect('2');
+	get_character_ExpectAndReturn('3');
+	put_character_Expect('3');
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_LEFT);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_RIGHT);
+
+	//run
+	main_command_prompt();
+	main_command_prompt();
+	TEST_ASSERT_EQUAL(3 , cursor);
+	TEST_ASSERT_EQUAL('\0', user_input[cursor]);
+}

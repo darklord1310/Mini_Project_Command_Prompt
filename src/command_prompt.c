@@ -72,7 +72,7 @@ Keycode get_key_press()
  */
 Keycode user_input_interface()
 {
-	int status, i;
+	int status;
 	int key_code;
 	
 	while(1)
@@ -80,18 +80,24 @@ Keycode user_input_interface()
 		key_code = get_key_press();
 		status = is_special_key(key_code);
 		if (status != 0)		// status !=0 means special character input	
+		{
+			if(status == CODE_ENTER);
+			{
+				if ( status == CODE_ARROWDOWN || status == CODE_ARROWUP);
+				else if(status == CODE_ENTER)
+					copystringtocharaary(latest_input, "");
+				else
+					copystringtocharaary(latest_input,user_input);
+			}
 			return status;
-			
+		}
+		
 		user_input[length_of_input] = key_code;
 		put_character(user_input[length_of_input]);
 		length_of_input++;
+		cursor = length_of_input;
 		user_input[length_of_input] = '\0';
-		
-		for( i=0 ; user_input[i] != '\0' ; i++)
-		{
-			latest_input[i] = user_input[i];
-		}
-		latest_input[i] = '\0';
+		copystringtocharaary(latest_input,user_input);
 	}
 }
 
@@ -359,14 +365,15 @@ void handle_ARROWDOWN()
 
 void handle_ARROWRIGHT()
 {
-	
+	if( user_input[cursor] != '\0')
+		cursor++;
 }
 
 
 void handle_ARROWLEFT()
 {
-
-
+	if(cursor != 0)
+		cursor--;
 }
 
 
@@ -383,15 +390,26 @@ void handle_DEL()
 
 void handle_PAGEUP()
 {
-	int latest = hb->latestIndex;
-	latest = readjustIndex(hb , latest-1);
-	copystringtocharaary(user_input, hb->buffer[latest]);
+	if( hb->buffer[hb->startIndex] == NULL)
+		copystringtocharaary(user_input, latest_input);
+	else
+	{
+		hb->currentIndex = hb->latestIndex;
+		hb->currentIndex = readjustIndex(hb , hb->currentIndex-1);
+		copystringtocharaary(user_input, hb->buffer[hb->currentIndex]);
+	}
 }
 
 
 void handle_PAGEDOWN()
 {
-	copystringtocharaary(user_input, hb->buffer[hb->startIndex]);
+	if( hb->buffer[hb->startIndex] == NULL)
+		copystringtocharaary(user_input, latest_input);
+	else
+	{
+		hb->currentIndex = hb->startIndex;
+		copystringtocharaary(user_input, hb->buffer[hb->currentIndex]);
+	}
 }
 
 
@@ -403,8 +421,6 @@ void handle_INSERT()
 
 void handle_END()
 {
-
-
 
 }
 

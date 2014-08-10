@@ -38,6 +38,7 @@
 #define CODE_ESCAPE			 0xFF1B
 
 typedef int Keycode;
+int cursor;
 
 
 extern char user_input[MAX_BUFFER_SIZE];
@@ -59,6 +60,7 @@ typedef struct
 
 int previous_status;
 int next_status;
+HistoryBuffer *hb;
 
 #endif // history_buffer_H
 
@@ -118,6 +120,5 @@ void handle_ENTER();
 void handle_ESCAPE();
 void initialize_historybuffer(int length_of_buffer);
 void main_command_prompt();
-HistoryBuffer *hb;
 
 #endif // command_prompt_H

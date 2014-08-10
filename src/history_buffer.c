@@ -144,11 +144,15 @@ char *historyBufferReadNext(HistoryBuffer *hb)
 	
 	if ( next_status == 1)
 	{
-		hb->currentIndex = hb->startIndex;
+		hb->currentIndex = hb->latestIndex;
 		return latest_input;
 	}
 	
+	if(hb->buffer[hb->startIndex] == NULL || hb->buffer[hb->currentIndex] == NULL)
+		return latest_input;
+
 	hb->currentIndex++;
+	
 	latest = readjustIndex(hb , latest-1);
 	hb->currentIndex = readjustIndex(hb , hb->currentIndex);
 	

@@ -264,7 +264,6 @@ void test_historyBufferReadNext_given_1plus6_2plus3_4plus5_should_return_4plus5_
 	TEST_ASSERT_EQUAL(2, hb->currentIndex);		
 	TEST_ASSERT_EQUAL_STRING("4+5" , string_return);
 	string_return = historyBufferReadNext(hb);	
-	TEST_ASSERT_EQUAL(hb->startIndex, hb->currentIndex);
 	TEST_ASSERT_EQUAL_STRING("0+6" , string_return);
 	historyBufferDel(hb);
 }
