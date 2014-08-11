@@ -13,6 +13,8 @@ void setUp(void)
 	cursor = 0;	// the length of input must be zero at first
 	next_status = 0;
 	previous_status = 0;
+	arrow_left_right_status = 0;
+	end_of_program = 0;
 }
 
 void tearDown(void)
@@ -1102,6 +1104,8 @@ void test_handle_INSERT_given_abcdef_cursor_at_c_enter_z_should_get_abzcdef()
 	get_character_ExpectAndReturn(ARROW_LEFT);
 	get_character_ExpectAndReturn(ESCAPECODE2);
 	get_character_ExpectAndReturn(KEY_INSERT);
+	get_character_ExpectAndReturn('z');
+
 
 	//run
 	main_command_prompt();
@@ -1111,8 +1115,7 @@ void test_handle_INSERT_given_abcdef_cursor_at_c_enter_z_should_get_abzcdef()
 	TEST_ASSERT_EQUAL(2 , cursor);
 	TEST_ASSERT_EQUAL('c', user_input[cursor]);
 	main_command_prompt();
-	TEST_ASSERT_EQUAL(3 , cursor);
+	TEST_ASSERT_EQUAL(3 , cursor); 
 	TEST_ASSERT_EQUAL('c', user_input[cursor]);
 	TEST_ASSERT_EQUAL_STRING("abzcdef", user_input);
-
 }

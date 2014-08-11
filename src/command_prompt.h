@@ -47,8 +47,8 @@ HistoryBuffer *hb;
 
 extern char user_input[MAX_BUFFER_SIZE];
 extern char latest_input[MAX_BUFFER_SIZE];
-
-
+extern int arrow_left_right_status;
+extern int end_of_program;
 
 /*
 \a (alert) Produces an audible or visible alert. The active
@@ -101,12 +101,15 @@ void handle_PAGEDOWN();
 void handle_INSERT();
 void handle_END();
 void handle_ENTER();
-void handle_ESCAPE();
+int handle_ESCAPE();
 void initialize_historybuffer(int length_of_buffer);
 void main_command_prompt();
 void readjustcursor();
 void movecharactersahead(int x, int y);
 void movecharactersbackward(int endofinput);
 int get_end_of_input();
+void consoleClearLine();
+void printfBuffer(char buffer[]);  
+void printBufferTill(char buffer[], int length);
 
 #endif // command_prompt_H

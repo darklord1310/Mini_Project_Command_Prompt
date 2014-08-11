@@ -8,6 +8,8 @@
 
 char user_input[MAX_BUFFER_SIZE];
 char latest_input[MAX_BUFFER_SIZE];
+int arrow_left_right_status;
+int end_of_program;
 
 
 /*  To check for the input is special key or not
@@ -89,14 +91,18 @@ Keycode user_input_interface()
 			}
 			return status;
 		}
-		
-		if(user_input[cursor] == '\0')
-			user_input[cursor] = '0';
-		
+				
 		user_input[cursor] = key_code;
 		put_character(user_input[cursor]);
-		cursor++;
-		user_input[cursor] = '\0';
+				
+		if(arrow_left_right_status != 1)	//if arrow left and right is not press previously
+		{
+			cursor++;
+			user_input[cursor] = '\0';
+		}
+		else
+			arrow_left_right_status=0;
+			
 		copystringtochararray(latest_input,user_input);
 	}
 }
@@ -111,6 +117,7 @@ void main_command_prompt()
 {
 	int keycode =  user_input_interface();
 	check_special_keys(keycode);
+
 }
 
 
@@ -303,6 +310,43 @@ void readjustcursor()
 
 
 
+void consoleClearLine()
+{
+	int i;
+	
+	printf("\r");
+	for(i=0; i<79;i++)
+	{
+		printf(" ");
+	}
+	printf("\r");
+}
+
+
+
+
+void printfBuffer(char buffer[])
+{
+	printf("%s", buffer);
+}
+
+
+
+
+void printBufferTill(char buffer[], int length)
+{
+	int i;
+	
+	printf("\r");
+	
+	for(i=0; i<length;i++)
+	{
+		printf("%c", buffer[i]);
+	}
+}
+
+
+
 
 void movecharactersahead(int x, int y)
 {
@@ -329,7 +373,7 @@ void movecharactersbackward(int endofinput)
 	while(1)
 	{
 		user_input[endofinput+x] = user_input[endofinput-y];
-		if(user_input[cursor-y] == user_input[cursor])
+		if(user_input[endofinput-y] == user_input[cursor])
 		{
 			user_input[cursor] = get_key_press();
 			cursor++;
@@ -455,6 +499,8 @@ void handle_ARROWDOWN()
 
 void handle_ARROWRIGHT()
 {
+	arrow_left_right_status=1;
+	
 	if( user_input[cursor] != '\0')
 		cursor++;
 }
@@ -463,6 +509,8 @@ void handle_ARROWRIGHT()
 
 void handle_ARROWLEFT()
 {
+	arrow_left_right_status=1;
+	
 	if(cursor != 0)
 		cursor--;
 }
@@ -528,7 +576,7 @@ void handle_INSERT()
 	
 	endofinput = get_end_of_input();
 	movecharactersbackward(endofinput);
-
+	copystringtochararray(latest_input , user_input);
 }
 
 
@@ -540,7 +588,8 @@ void handle_END()
 
 
 
-void handle_ESCAPE()
+int handle_ESCAPE()
 {
-
+	end_of_program = 1;
+	return end_of_program;
 }
