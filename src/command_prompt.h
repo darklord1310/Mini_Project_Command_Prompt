@@ -1,5 +1,8 @@
 #ifndef command_prompt_H
 #define command_prompt_H
+
+#include "history_buffer.h"
+
 #define ARROW_UP 			  72		// will output 2 bytes instead of 1 byte when press, first byte is  224
 #define ARROW_DOWN  		  80		// will output 2 bytes instead of 1 byte when press, first byte is  224
 #define ARROW_LEFT 			  75		// will output 2 bytes instead of 1 byte when press, first byte is  224
@@ -37,31 +40,13 @@
 #define CODE_BACKSPACE	 	 0xFF08		
 #define CODE_ESCAPE			 0xFF1B
 
+
 typedef int Keycode;
 int cursor;
-
+HistoryBuffer *hb;
 
 extern char user_input[MAX_BUFFER_SIZE];
 extern char latest_input[MAX_BUFFER_SIZE];
-
-#ifndef history_buffer_H
-#define history_buffer_H
-
-typedef struct
-{
-	char **buffer;
-	int length;
-	int currentIndex;
-	int latestIndex;
-	int startIndex;
-
-}HistoryBuffer;
-
-int previous_status;
-int next_status;
-HistoryBuffer *hb;
-
-#endif // history_buffer_H
 
 
 
@@ -101,7 +86,7 @@ HistoryBuffer *hb;
 Keycode get_key_press();  				   // get key press 
 Keycode is_special_key(int key_code);	   // check whether input is special key or not
 Keycode user_input_interface();
-void copystringtocharaary(char array[] , char *string);
+void copystringtochararray(char array[] , char *string);
 void mockspecialkeys(int key_code);
 void check_special_keys(int key_code);
 void handle_BACKSPACE();
@@ -120,6 +105,8 @@ void handle_ESCAPE();
 void initialize_historybuffer(int length_of_buffer);
 void main_command_prompt();
 void readjustcursor();
-void movestringaheadonce(int x, int y);
+void movecharactersahead(int x, int y);
+void movecharactersbackward(int endofinput);
+int get_end_of_input();
 
 #endif // command_prompt_H

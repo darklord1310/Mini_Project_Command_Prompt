@@ -71,8 +71,7 @@ Keycode get_key_press()
  */
 Keycode user_input_interface()
 {
-	int status;
-	int key_code;
+	int status,key_code;
 	
 	while(1)
 	{
@@ -84,9 +83,9 @@ Keycode user_input_interface()
 			{
 				if ( status == CODE_ARROWDOWN || status == CODE_ARROWUP);
 				else if(status == CODE_ENTER)
-					copystringtocharaary(latest_input, "");
+					copystringtochararray(latest_input, "");
 				else
-					copystringtocharaary(latest_input,user_input);
+					copystringtochararray(latest_input,user_input);
 			}
 			return status;
 		}
@@ -98,7 +97,7 @@ Keycode user_input_interface()
 		put_character(user_input[cursor]);
 		cursor++;
 		user_input[cursor] = '\0';
-		copystringtocharaary(latest_input,user_input);
+		copystringtochararray(latest_input,user_input);
 	}
 }
 
@@ -305,7 +304,7 @@ void readjustcursor()
 
 
 
-void movestringaheadonce(int x, int y)
+void movecharactersahead(int x, int y)
 {
 	while(1)
 	{
@@ -323,37 +322,69 @@ void movestringaheadonce(int x, int y)
 
 
 
+void movecharactersbackward(int endofinput)
+{
+	int y=0,x=1;
+	
+	while(1)
+	{
+		user_input[endofinput+x] = user_input[endofinput-y];
+		if(user_input[cursor-y] == user_input[cursor])
+		{
+			user_input[cursor] = get_key_press();
+			cursor++;
+			break;
+		}
+		x--;
+		y++;
+	}
+}
+
+
+
+//get the index of the end of the input
+int get_end_of_input()
+{
+	int j=0,length=0;
+	
+	while ( user_input[j] != '\0')
+	{
+		length++;
+		j++;
+	}
+	return length;
+}
+
+
+
 /*  To perform backspace
  * 			
  */
 void handle_BACKSPACE()
 {
-	int j=0 , length=0, x=-1, y=0;
+	int j=0 , endofinput;
 	
 	if(user_input[cursor] == '\0')
 	{
-		while ( user_input[j] != '\0')
-		{
-			length++;
-			j++;
-		}
-	user_input[length-1] = '\0';
-	cursor--;
+		endofinput = get_end_of_input();
+		user_input[endofinput-1] = '\0';
+		cursor--;
 	
-	if(cursor < 0)
-		cursor=0;
+		if(cursor < 0)
+			cursor=0;
 	}
 	else
 	{
 		if(cursor != 0)
 		{
-			movestringaheadonce(-1, 0);
+			movecharactersahead(-1, 0);
 			cursor--;
 			if(cursor < 0)
 				cursor=0;
 		}
 	}
-	// copystringtocharaary(latest_input , user_input);
+	
+	copystringtochararray(latest_input , user_input);
 }
 
 
@@ -369,7 +400,7 @@ void initialize_historybuffer(int length_of_buffer)
 
 
 //copy the content of a given string to char array
-void copystringtocharaary(char array[] , char *string)
+void copystringtochararray(char array[] , char *string)
 {
 	int i;
 	
@@ -401,7 +432,7 @@ void handle_ARROWUP()
 {
 
 	char *temp = historyBufferReadPrevious(hb);
-	copystringtocharaary(user_input, temp);
+	copystringtochararray(user_input, temp);
 	readjustcursor();
 }
 
@@ -415,7 +446,7 @@ void handle_ARROWDOWN()
 {
 	char *temp;
 	temp = historyBufferReadNext(hb);
-	copystringtocharaary(user_input, temp);
+	copystringtochararray(user_input, temp);
 	readjustcursor();
 }
 
@@ -448,15 +479,14 @@ void handle_HOME()
 
 
 
-
 void handle_DEL()
 {
 	if(user_input[cursor+1] == '\0')
 		user_input[cursor] = '\0';
 	else
-		movestringaheadonce(0, 1);
+		movecharactersahead(0, 1);
 		
-	// copystringtocharaary(latest_input , user_input);
+	copystringtochararray(latest_input , user_input);
 }
 
 
@@ -465,12 +495,12 @@ void handle_DEL()
 void handle_PAGEDOWN()
 {
 	if( hb->buffer[hb->startIndex] == NULL)
-		copystringtocharaary(user_input, latest_input);
+		copystringtochararray(user_input, latest_input);
 	else
 	{
 		hb->currentIndex = hb->latestIndex;
 		hb->currentIndex = readjustIndex(hb , hb->currentIndex-1);
-		copystringtocharaary(user_input, hb->buffer[hb->currentIndex]);
+		copystringtochararray(user_input, hb->buffer[hb->currentIndex]);
 	}
 }
 
@@ -481,11 +511,11 @@ void handle_PAGEDOWN()
 void handle_PAGEUP()
 {
 	if( hb->buffer[hb->startIndex] == NULL)
-		copystringtocharaary(user_input, latest_input);
+		copystringtochararray(user_input, latest_input);
 	else
 	{
 		hb->currentIndex = hb->startIndex;
-		copystringtocharaary(user_input, hb->buffer[hb->currentIndex]);
+		copystringtochararray(user_input, hb->buffer[hb->currentIndex]);
 	}
 }
 
@@ -494,10 +524,12 @@ void handle_PAGEUP()
 
 void handle_INSERT()
 {
-
+	int endofinput;
+	
+	endofinput = get_end_of_input();
+	movecharactersbackward(endofinput);
 
 }
-
 
 
 
@@ -505,7 +537,6 @@ void handle_END()
 {
 	readjustcursor();
 }
-
 
 
 

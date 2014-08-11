@@ -806,6 +806,36 @@ void test_handle_arrow_left_given_123_call_twice_should_point_at_1()
 
 
 
+void test_handle_arrow_left_given_123_call_twice_and_enter_char_d_should_get_1d3()
+{
+	initialize_historybuffer(5);			//initialize history buffer
+		
+	//mock
+	get_character_ExpectAndReturn('1');
+	put_character_Expect('1');
+	get_character_ExpectAndReturn('2');
+	put_character_Expect('2');
+	get_character_ExpectAndReturn('3');
+	put_character_Expect('3');
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_LEFT);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_LEFT);
+	get_character_ExpectAndReturn('d');
+	put_character_Expect('d');
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_RIGHT);
+
+	//run
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	TEST_ASSERT_EQUAL(2 , cursor);
+	TEST_ASSERT_EQUAL_STRING("1d3", user_input);
+}
+
+
+
 // boundary test for handle_ARROWLEFT
 void test_handle_arrow_left_given_123_call_thrice_should_point_at_0()
 {
@@ -864,6 +894,7 @@ void test_handle_arrow_right_given_string_of_123_cursor_pointed_at_1_call_once_s
 
 
 
+// boundary test for handle_ARROWRIGHT
 void test_handle_arrow_right_given_string_of_123_cursor_pointed_at_3_call_once_should_point_at_next_input()
 {
 	initialize_historybuffer(3);			//initialize history buffer
@@ -1041,3 +1072,47 @@ void test_handle_DEL_given_abcde_cursor_at_b_del_is_press_should_get_acde()
 	TEST_ASSERT_EQUAL_STRING("acde", user_input);
 }
 
+
+
+
+void test_handle_INSERT_given_abcdef_cursor_at_c_enter_z_should_get_abzcdef()
+{
+	initialize_historybuffer(3);			//initialize history buffer
+		
+	//mock
+	get_character_ExpectAndReturn('a');
+	put_character_Expect('a');
+	get_character_ExpectAndReturn('b');
+	put_character_Expect('b');
+	get_character_ExpectAndReturn('c');
+	put_character_Expect('c');
+	get_character_ExpectAndReturn('d');
+	put_character_Expect('d');
+	get_character_ExpectAndReturn('e');
+	put_character_Expect('e');
+	get_character_ExpectAndReturn('f');
+	put_character_Expect('f');
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_LEFT);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_LEFT);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_LEFT);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_LEFT);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(KEY_INSERT);
+
+	//run
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	TEST_ASSERT_EQUAL(2 , cursor);
+	TEST_ASSERT_EQUAL('c', user_input[cursor]);
+	main_command_prompt();
+	TEST_ASSERT_EQUAL(3 , cursor);
+	TEST_ASSERT_EQUAL('c', user_input[cursor]);
+	TEST_ASSERT_EQUAL_STRING("abzcdef", user_input);
+
+}
