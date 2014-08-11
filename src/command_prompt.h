@@ -120,5 +120,6 @@ void handle_ESCAPE();
 void initialize_historybuffer(int length_of_buffer);
 void main_command_prompt();
 void readjustcursor();
+void movestringaheadonce(int x, int y);
 
 #endif // command_prompt_H

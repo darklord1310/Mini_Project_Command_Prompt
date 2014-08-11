@@ -288,6 +288,7 @@ void mockspecialkeys(int key_code)
 
 
 
+
 //adjust the cursor to the end of the user input
 void readjustcursor()
 {
@@ -299,6 +300,24 @@ void readjustcursor()
 	}
 	
 	cursor = i;
+}
+
+
+
+
+void movestringaheadonce(int x, int y)
+{
+	while(1)
+	{
+		user_input[cursor+x] = user_input[cursor+y];
+		x++;
+		y++;
+		if(user_input[cursor+y] == '\0')
+		{
+			user_input[cursor+x] = '\0';
+			break;
+		}
+	}
 }
 
 
@@ -328,23 +347,15 @@ void handle_BACKSPACE()
 	{
 		if(cursor != 0)
 		{
-			while(1)
-			{
-				user_input[cursor+x] = user_input[cursor+y];
-				x++;
-				y++;
-				if(user_input[cursor+y] == '\0')
-				{
-					user_input[cursor+x] = '\0';
-					break;
-				}
-			}
+			movestringaheadonce(-1, 0);
 			cursor--;
 			if(cursor < 0)
 				cursor=0;
 		}
 	}
+	// copystringtocharaary(latest_input , user_input);
 }
+
 
 
 
@@ -353,6 +364,7 @@ void initialize_historybuffer(int length_of_buffer)
 {
 	hb = historyBufferNew(length_of_buffer);
 }
+
 
 
 
@@ -369,6 +381,7 @@ void copystringtocharaary(char array[] , char *string)
 }
 
 
+
 /* To perform enter
  *
  */
@@ -377,6 +390,8 @@ void handle_ENTER()
 	historyBufferAdd(hb, user_input);
 	cursor = 0;		// has to reinitialize length of input to 0 to get new input correctly
 }
+
+
 
 
 /* To perform arrow up
@@ -389,6 +404,7 @@ void handle_ARROWUP()
 	copystringtocharaary(user_input, temp);
 	readjustcursor();
 }
+
 
 
 
@@ -405,11 +421,13 @@ void handle_ARROWDOWN()
 
 
 
+
 void handle_ARROWRIGHT()
 {
 	if( user_input[cursor] != '\0')
 		cursor++;
 }
+
 
 
 void handle_ARROWLEFT()
@@ -420,17 +438,29 @@ void handle_ARROWLEFT()
 
 
 
+
+
 void handle_HOME()
 {
 	cursor = 0;
 }
 
 
+
+
+
 void handle_DEL()
 {
-	user_input[cursor] = '\0';
-
+	if(user_input[cursor+1] == '\0')
+		user_input[cursor] = '\0';
+	else
+		movestringaheadonce(0, 1);
+		
+	// copystringtocharaary(latest_input , user_input);
 }
+
+
+
 
 void handle_PAGEDOWN()
 {
@@ -445,6 +475,9 @@ void handle_PAGEDOWN()
 }
 
 
+
+
+
 void handle_PAGEUP()
 {
 	if( hb->buffer[hb->startIndex] == NULL)
@@ -457,16 +490,23 @@ void handle_PAGEUP()
 }
 
 
+
+
 void handle_INSERT()
 {
 
 
 }
 
+
+
+
 void handle_END()
 {
 	readjustcursor();
 }
+
+
 
 
 void handle_ESCAPE()

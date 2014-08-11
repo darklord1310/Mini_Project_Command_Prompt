@@ -947,3 +947,97 @@ void test_handle_END_given_123_cursor_is_at_2_when_END_is_press_should_get_curso
 	main_command_prompt();
 	TEST_ASSERT_EQUAL('\0', user_input[cursor]);
 }
+
+
+
+
+void test_handle_DEL_given_abc_cursor_at_c_del_is_press_should_get_ab()
+{
+	initialize_historybuffer(3);			//initialize history buffer
+		
+	//mock
+	get_character_ExpectAndReturn('a');
+	put_character_Expect('a');
+	get_character_ExpectAndReturn('b');
+	put_character_Expect('b');
+	get_character_ExpectAndReturn('c');
+	put_character_Expect('c');
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_LEFT);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(KEY_DELETE);
+
+	//run
+	main_command_prompt();
+	TEST_ASSERT_EQUAL(2 , cursor);
+	TEST_ASSERT_EQUAL('c', user_input[cursor]);
+	main_command_prompt();
+	TEST_ASSERT_EQUAL(2 , cursor);
+	TEST_ASSERT_EQUAL('\0', user_input[cursor]);
+	TEST_ASSERT_EQUAL_STRING("ab", user_input);
+}
+
+
+
+void test_handle_DEL_given_abc_cursor_at_behind_c_del_is_press_should_get_abc()
+{
+	initialize_historybuffer(3);			//initialize history buffer
+		
+	//mock
+	get_character_ExpectAndReturn('a');
+	put_character_Expect('a');
+	get_character_ExpectAndReturn('b');
+	put_character_Expect('b');
+	get_character_ExpectAndReturn('c');
+	put_character_Expect('c');
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(KEY_DELETE);
+
+	//run
+	main_command_prompt();
+	TEST_ASSERT_EQUAL(3 , cursor);
+	TEST_ASSERT_EQUAL('\0', user_input[cursor]);
+	TEST_ASSERT_EQUAL_STRING("abc", user_input);
+}
+
+
+
+void test_handle_DEL_given_abcde_cursor_at_b_del_is_press_should_get_acde()
+{
+	initialize_historybuffer(3);			//initialize history buffer
+		
+	//mock
+	get_character_ExpectAndReturn('a');
+	put_character_Expect('a');
+	get_character_ExpectAndReturn('b');
+	put_character_Expect('b');
+	get_character_ExpectAndReturn('c');
+	put_character_Expect('c');
+	get_character_ExpectAndReturn('d');
+	put_character_Expect('d');
+	get_character_ExpectAndReturn('e');
+	put_character_Expect('e');
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_LEFT);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_LEFT);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_LEFT);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(ARROW_LEFT);
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(KEY_DELETE);
+
+	//run
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	main_command_prompt();
+	TEST_ASSERT_EQUAL(1 , cursor);
+	TEST_ASSERT_EQUAL('b', user_input[cursor]);
+	main_command_prompt();
+	TEST_ASSERT_EQUAL(1 , cursor);
+	TEST_ASSERT_EQUAL('c', user_input[cursor]);
+	TEST_ASSERT_EQUAL_STRING("acde", user_input);
+}
+

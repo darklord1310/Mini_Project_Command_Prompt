@@ -88,6 +88,7 @@ void handle_ESCAPE();
 void initialize_historybuffer(int length_of_buffer);
 void main_command_prompt();
 void readjustcursor();
+void movestringaheadonce(int x, int y);
 HistoryBuffer *hb;
 
 
@@ -309,6 +310,25 @@ void check_special_keys(int key_code)
 }
 
 
+
+
+void movestringaheadonce(int x, int y)
+{
+	while(1)
+	{
+		user_input[cursor+x] = user_input[cursor+y];
+		x++;
+		y++;
+		if(user_input[cursor+y] == '\0')
+		{
+			user_input[cursor+x] = '\0';
+			break;
+		}
+	}
+}
+
+
+
 // To initialize for the historybuffer
 void initialize_historybuffer(int length_of_buffer)
 {
@@ -389,24 +409,16 @@ void handle_BACKSPACE()
 	{
 		if(cursor != 0)
 		{
-			while(1)
-			{
-				user_input[cursor+x] = user_input[cursor+y];
-				x++;
-				y++;
-				if(user_input[cursor+y] == '\0')
-				{
-					user_input[cursor+x] = '\0';
-					break;
-				}
-			}
+			movestringaheadonce(-1, 0);
 			cursor--;
 			if(cursor < 0)
 				cursor=0;
 		}
 		printf("%s", user_input);
 	}
+	copystringtocharaary(latest_input , user_input);
 }
+
 
 
 
@@ -433,8 +445,16 @@ void handle_HOME()
 
 void handle_DEL()
 {
-
+	if(user_input[cursor+1] == '\0')
+		user_input[cursor] = '\0';
+	else
+		movestringaheadonce(0, 1);
+		
+	copystringtocharaary(latest_input , user_input);
 }
+
+
+
 
 void handle_PAGEDOWN()
 {
@@ -449,6 +469,7 @@ void handle_PAGEDOWN()
 	
 	printf("%s", user_input);
 }
+
 
 
 void handle_PAGEUP()
@@ -477,10 +498,12 @@ void handle_END()
 }
 
 
+
 void handle_ESCAPE()
 {
 	
 }
+
 
 
 /*
