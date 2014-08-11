@@ -109,7 +109,7 @@ void movecharactersahead(int x, int y);
 void movecharactersbackward(int endofinput);
 int get_end_of_input();
 void consoleClearLine();
-void printfBuffer(char buffer[]);  
+void printBuffer(char buffer[]);  
 void printBufferTill(char buffer[], int length);
 
 #endif // command_prompt_H

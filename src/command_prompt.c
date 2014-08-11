@@ -84,10 +84,8 @@ Keycode user_input_interface()
 			if(status == CODE_ENTER);
 			{
 				if ( status == CODE_ARROWDOWN || status == CODE_ARROWUP);
-				else if(status == CODE_ENTER)
-					copystringtochararray(latest_input, "");
 				else
-					copystringtochararray(latest_input,user_input);
+					copystringtochararray(latest_input, "");
 			}
 			return status;
 		}
@@ -325,7 +323,7 @@ void consoleClearLine()
 
 
 
-void printfBuffer(char buffer[])
+void printBuffer(char buffer[])
 {
 	printf("%s", buffer);
 }
@@ -429,6 +427,8 @@ void handle_BACKSPACE()
 	}
 	
 	copystringtochararray(latest_input , user_input);
+	consoleClearLine();
+	printBuffer(user_input);
 }
 
 
@@ -463,6 +463,9 @@ void copystringtochararray(char array[] , char *string)
 void handle_ENTER()
 {
 	historyBufferAdd(hb, user_input);
+	consoleClearLine();
+	copystringtochararray(user_input,"");
+	printBuffer(user_input);
 	cursor = 0;		// has to reinitialize length of input to 0 to get new input correctly
 }
 
@@ -478,6 +481,9 @@ void handle_ARROWUP()
 	char *temp = historyBufferReadPrevious(hb);
 	copystringtochararray(user_input, temp);
 	readjustcursor();
+	consoleClearLine();
+	printBuffer(user_input);
+	
 }
 
 
@@ -488,10 +494,11 @@ void handle_ARROWUP()
  */
 void handle_ARROWDOWN()
 {
-	char *temp;
-	temp = historyBufferReadNext(hb);
+	char *temp = historyBufferReadNext(hb);
 	copystringtochararray(user_input, temp);
 	readjustcursor();
+	consoleClearLine();
+	printBuffer(user_input);
 }
 
 
@@ -503,6 +510,8 @@ void handle_ARROWRIGHT()
 	
 	if( user_input[cursor] != '\0')
 		cursor++;
+		
+	printBufferTill(user_input,cursor);
 }
 
 
@@ -513,6 +522,8 @@ void handle_ARROWLEFT()
 	
 	if(cursor != 0)
 		cursor--;
+		
+	printBufferTill(user_input,cursor);
 }
 
 
@@ -522,6 +533,9 @@ void handle_ARROWLEFT()
 void handle_HOME()
 {
 	cursor = 0;
+	consoleClearLine();
+	printBuffer(user_input);
+	printf("\r");
 }
 
 
@@ -535,6 +549,9 @@ void handle_DEL()
 		movecharactersahead(0, 1);
 		
 	copystringtochararray(latest_input , user_input);
+	consoleClearLine();
+	printBuffer(user_input);
+	printBufferTill(user_input,cursor);
 }
 
 
@@ -550,6 +567,10 @@ void handle_PAGEDOWN()
 		hb->currentIndex = readjustIndex(hb , hb->currentIndex-1);
 		copystringtochararray(user_input, hb->buffer[hb->currentIndex]);
 	}
+	
+	consoleClearLine();
+	printBuffer(user_input);
+	printBufferTill(user_input,cursor);
 }
 
 
@@ -565,6 +586,9 @@ void handle_PAGEUP()
 		hb->currentIndex = hb->startIndex;
 		copystringtochararray(user_input, hb->buffer[hb->currentIndex]);
 	}
+	
+	consoleClearLine();
+	printBuffer(user_input);
 }
 
 
@@ -577,6 +601,8 @@ void handle_INSERT()
 	endofinput = get_end_of_input();
 	movecharactersbackward(endofinput);
 	copystringtochararray(latest_input , user_input);
+	consoleClearLine();
+	printBuffer(user_input);
 }
 
 
@@ -584,6 +610,7 @@ void handle_INSERT()
 void handle_END()
 {
 	readjustcursor();
+	printBufferTill(user_input,cursor);
 }
 
 
