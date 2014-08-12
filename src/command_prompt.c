@@ -89,7 +89,9 @@ Keycode user_input_interface()
 			}
 			return status;
 		}
-				
+		if(user_input[cursor] == '\0')
+			user_input[cursor+1]='\0';
+			
 		user_input[cursor] = key_code;
 		put_character(user_input[cursor]);
 				
@@ -99,7 +101,10 @@ Keycode user_input_interface()
 			user_input[cursor] = '\0';
 		}
 		else
+		{
+			cursor++;
 			arrow_left_right_status=0;
+		}
 			
 		copystringtochararray(latest_input,user_input);
 	}
@@ -198,94 +203,6 @@ void check_special_keys(int key_code)
 				break;
 		case (CODE_BACKSPACE):
 				handle_BACKSPACE();
-				break;
-	}
-}
-
-
-
-
-
-/*This is the function exactly similar to check_special_keys, except
- *this is only for mocking purpose
- */
-void mockspecialkeys(int key_code)
-{
-	switch ( key_code)
-	{
-		case (CODE_ARROWUP):
-				mockARROWUP();
-				break;
-		
-		case (CODE_ARROWDOWN):
-				mockARROWDOWN();
-				break;
-		
-		case (CODE_ARROWLEFT):
-				mockARROWLEFT();
-				break;
-		
-		case (CODE_ARROWRIGHT):
-				mockARROWRIGHT();
-				break;
-		
-		case (CODE_HOME1):
-				mockHOME();
-				break;
-		
-		case (CODE_HOME2):
-				mockHOME();
-				break;
-				
-		case (CODE_DELETE1):
-				mockDEL();
-				break;
-				
-		case (CODE_DELETE2):
-				mockDEL();
-				break;
-		
-		case (CODE_PAGEUP1):
-				mockPAGEUP();
-				break;
-		
-		case (CODE_PAGEUP2):
-				mockPAGEUP();
-				break;
-		
-		case (CODE_PAGEDOWN1):
-				mockPAGEDOWN();
-				break;
-		
-		case (CODE_PAGEDOWN2):
-				mockPAGEDOWN();
-				break;
-		
-		case (CODE_INSERT1):
-				mockINSERT();
-				break;
-		
-		case (CODE_INSERT2):
-				mockINSERT();
-				break;
-				
-		case (CODE_END1):
-				mockEND();
-				break;
-		
-		case (CODE_END2):
-				mockEND();
-				break;
-				
-		case (CODE_ENTER):
-				mockENTER();
-				break;
-		
-		case (CODE_ESCAPE):
-				mockESCAPE();
-				break;
-		case (CODE_BACKSPACE):
-				mockBACKSPACE();
 				break;
 	}
 }
@@ -429,6 +346,7 @@ void handle_BACKSPACE()
 	copystringtochararray(latest_input , user_input);
 	consoleClearLine();
 	printBuffer(user_input);
+	printBufferTill(user_input,cursor);
 }
 
 
@@ -466,6 +384,7 @@ void handle_ENTER()
 	consoleClearLine();
 	copystringtochararray(user_input,"");
 	printBuffer(user_input);
+	previous_status = 0;
 	cursor = 0;		// has to reinitialize length of input to 0 to get new input correctly
 }
 
@@ -483,7 +402,6 @@ void handle_ARROWUP()
 	readjustcursor();
 	consoleClearLine();
 	printBuffer(user_input);
-	
 }
 
 
@@ -533,9 +451,7 @@ void handle_ARROWLEFT()
 void handle_HOME()
 {
 	cursor = 0;
-	consoleClearLine();
-	printBuffer(user_input);
-	printf("\r");
+	printBufferTill(user_input,cursor);
 }
 
 
@@ -567,10 +483,9 @@ void handle_PAGEDOWN()
 		hb->currentIndex = readjustIndex(hb , hb->currentIndex-1);
 		copystringtochararray(user_input, hb->buffer[hb->currentIndex]);
 	}
-	
+	readjustcursor();
 	consoleClearLine();
 	printBuffer(user_input);
-	printBufferTill(user_input,cursor);
 }
 
 
@@ -586,7 +501,7 @@ void handle_PAGEUP()
 		hb->currentIndex = hb->startIndex;
 		copystringtochararray(user_input, hb->buffer[hb->currentIndex]);
 	}
-	
+	readjustcursor();
 	consoleClearLine();
 	printBuffer(user_input);
 }
@@ -603,6 +518,7 @@ void handle_INSERT()
 	copystringtochararray(latest_input , user_input);
 	consoleClearLine();
 	printBuffer(user_input);
+	printBufferTill(user_input,cursor);
 }
 
 

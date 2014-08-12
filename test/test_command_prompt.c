@@ -5,7 +5,6 @@
 #include <malloc.h>
 #include "mock_get_ch.h"
 #include "mock_putch.h"
-#include "mock_mockspecial_keys.h"
 
 
 void setUp(void)
@@ -110,67 +109,31 @@ void test_user_input_interface_given_abc_and_enter_key_buffer_should_get_abc()
 
 
 
-
-
-void test_mockspecialkeys_given_arrowup_should_call_function_mockARROWUP()
+void test_readjust_cursor_given_user_input_abcd_should_get_cursor_is_4()
 {
+	initialize_historybuffer(3);			//initialize history buffer
+		
 	//mock
+	get_character_ExpectAndReturn('a');
+	put_character_Expect('a');
+	get_character_ExpectAndReturn('b');
+	put_character_Expect('b');
+	get_character_ExpectAndReturn('c');
+	put_character_Expect('c');
+	get_character_ExpectAndReturn('d');
+	put_character_Expect('d');
 	get_character_ExpectAndReturn(ESCAPECODE2);
-	get_character_ExpectAndReturn(ARROW_UP);
-	mockARROWUP_Expect();
+	get_character_ExpectAndReturn(ARROW_LEFT);	//just to get out from the function
+	
+	//run
+	main_command_prompt();
+	TEST_ASSERT_EQUAL(3, cursor);
+	TEST_ASSERT_EQUAL('d', user_input[cursor]);
+	TEST_ASSERT_EQUAL('\0', user_input[cursor+1]);
+	readjustcursor();
+	TEST_ASSERT_EQUAL(4, cursor);
 
-
-	//run	
-	int key = user_input_interface();
-	mockspecialkeys(key);
 }
-
-
-
-void test_mockspecialkeys_given_arrowdown_should_call_function_mockARROWDOWN()
-{
-	//mock
-	get_character_ExpectAndReturn(ESCAPECODE2);
-	get_character_ExpectAndReturn(ARROW_DOWN);
-	mockARROWDOWN_Expect();
-
-
-	//run	
-	int key = user_input_interface();
-	mockspecialkeys(key);
-}
-
-
-
-void test_mockspecialkeys_given_arrowright_should_call_function_mockARROWRIGHT()
-{
-	//mock
-	get_character_ExpectAndReturn(ESCAPECODE2);
-	get_character_ExpectAndReturn(ARROW_RIGHT);
-	mockARROWRIGHT_Expect();
-
-
-	//run	
-	int key = user_input_interface();
-	mockspecialkeys(key);
-}
-
-
-
-void test_mockspecialkeys_given_arrowleft_should_call_function_mockARROWLEFT()
-{
-	//mock
-	get_character_ExpectAndReturn(ESCAPECODE2);
-	get_character_ExpectAndReturn(ARROW_LEFT);
-	mockARROWLEFT_Expect();
-
-
-	//run	
-	int key = user_input_interface();
-	mockspecialkeys(key);
-}
-
-
 
 
 // to test the handle backspace function
@@ -832,7 +795,7 @@ void test_handle_arrow_left_given_123_call_twice_and_enter_char_d_should_get_1d3
 	main_command_prompt();
 	main_command_prompt();
 	main_command_prompt();
-	TEST_ASSERT_EQUAL(2 , cursor);
+	TEST_ASSERT_EQUAL(3 , cursor);
 	TEST_ASSERT_EQUAL_STRING("1d3", user_input);
 }
 
@@ -1011,7 +974,7 @@ void test_handle_DEL_given_abc_cursor_at_c_del_is_press_should_get_ab()
 }
 
 
-
+//boundary test for delete
 void test_handle_DEL_given_abc_cursor_at_behind_c_del_is_press_should_get_abc()
 {
 	initialize_historybuffer(3);			//initialize history buffer
@@ -1119,3 +1082,253 @@ void test_handle_INSERT_given_abcdef_cursor_at_c_enter_z_should_get_abzcdef()
 	TEST_ASSERT_EQUAL('c', user_input[cursor]);
 	TEST_ASSERT_EQUAL_STRING("abzcdef", user_input);
 }
+
+
+// void test_everything()
+// {
+	// initialize_historybuffer(3);			//initialize history buffer
+		
+	// mock
+	// get_character_ExpectAndReturn('a');
+	// put_character_Expect('a');
+	// get_character_ExpectAndReturn('b');
+	// put_character_Expect('b');
+	// get_character_ExpectAndReturn('c');
+	// put_character_Expect('c');
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(ARROW_LEFT);
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(ARROW_RIGHT);
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(ARROW_RIGHT);
+	// get_character_ExpectAndReturn('d');
+	// put_character_Expect('d');
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(ARROW_LEFT);
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(KEY_INSERT);
+	// get_character_ExpectAndReturn('z');
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(KEY_INSERT);
+	// get_character_ExpectAndReturn('i');
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(ARROW_RIGHT);
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(ARROW_RIGHT);
+	// get_character_ExpectAndReturn('e');
+	// put_character_Expect('e');
+	// get_character_ExpectAndReturn('f');
+	// put_character_Expect('f');
+	// get_character_ExpectAndReturn(KEY_ENTER);
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(ARROW_UP);
+	// get_character_ExpectAndReturn(KEY_BACKSPACE);
+	// get_character_ExpectAndReturn(KEY_BACKSPACE);
+	// get_character_ExpectAndReturn(KEY_BACKSPACE);
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(ARROW_LEFT);
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(ARROW_LEFT);
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(ARROW_LEFT);
+	// get_character_ExpectAndReturn('a');
+	// put_character_Expect('a');
+	// get_character_ExpectAndReturn('b');
+	// put_character_Expect('b');
+	// get_character_ExpectAndReturn('c');
+	// put_character_Expect('c');
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(ARROW_LEFT);
+	// get_character_ExpectAndReturn('x');
+	// put_character_Expect('x');
+	// get_character_ExpectAndReturn('y');
+	// put_character_Expect('y');
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(ARROW_RIGHT);
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(ARROW_LEFT);
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(ARROW_LEFT);
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(ARROW_LEFT);
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(KEY_HOME);
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(KEY_END);
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(KEY_INSERT);
+	// get_character_ExpectAndReturn('i');
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(KEY_INSERT);
+	// get_character_ExpectAndReturn('i');
+	// get_character_ExpectAndReturn(KEY_ENTER);
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(ARROW_UP);
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(ARROW_UP);
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(ARROW_UP);
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(ARROW_DOWN);
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(ARROW_DOWN);
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(ARROW_DOWN);
+	// get_character_ExpectAndReturn('a');
+	// put_character_Expect('a');
+	// get_character_ExpectAndReturn('b');
+	// put_character_Expect('b');
+	// get_character_ExpectAndReturn('c');
+	// put_character_Expect('c');
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(ARROW_LEFT);
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(ARROW_LEFT);
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(KEY_DELETE);
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(KEY_INSERT);
+	// get_character_ExpectAndReturn('i');
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(KEY_DELETE);
+	// get_character_ExpectAndReturn(ESCAPECODE2);
+	// get_character_ExpectAndReturn(KEY_HOME);
+	// get_character_ExpectAndReturn('a');
+	// put_character_Expect('a');
+	// get_character_ExpectAndReturn('b');
+	// put_character_Expect('b');
+	// get_character_ExpectAndReturn('c');
+	// put_character_Expect('c');
+	// get_character_ExpectAndReturn(KEY_BACKSPACE);
+
+	// run
+	// main_command_prompt();
+	// main_command_prompt();
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(3 , cursor);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(3 , cursor);
+	// TEST_ASSERT_EQUAL_STRING("abcd", user_input);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(4 , cursor);
+	// TEST_ASSERT_EQUAL_STRING("abczd", user_input);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(5 , cursor);
+	// TEST_ASSERT_EQUAL_STRING("abczid", user_input);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(6 , cursor);
+	// TEST_ASSERT_EQUAL('\0', user_input[cursor]);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(6 , cursor);
+	// TEST_ASSERT_EQUAL('\0', user_input[cursor]);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(0 , cursor);
+	// TEST_ASSERT_EQUAL_STRING("", user_input);
+	// TEST_ASSERT_EQUAL_STRING("abczidef", hb->buffer[0]);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(8 , cursor);
+	// TEST_ASSERT_EQUAL_STRING("abczidef", user_input);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(7 , cursor);
+	// TEST_ASSERT_EQUAL('\0', user_input[cursor]);
+	// TEST_ASSERT_EQUAL_STRING("abczide", user_input);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(6 , cursor);
+	// TEST_ASSERT_EQUAL('\0', user_input[cursor]);
+	// TEST_ASSERT_EQUAL_STRING("abczid", user_input);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(5 , cursor);
+	// TEST_ASSERT_EQUAL('\0', user_input[cursor]);
+	// TEST_ASSERT_EQUAL_STRING("abczi", user_input);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(4 , cursor); 
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(3 , cursor); 
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(2 , cursor); 
+	// TEST_ASSERT_EQUAL('c', user_input[cursor]);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(4 , cursor); 
+	// TEST_ASSERT_EQUAL('c', user_input[cursor]);
+	// TEST_ASSERT_EQUAL('\0', user_input[cursor+1]);
+	// TEST_ASSERT_EQUAL_STRING("ababc", user_input);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(6 , cursor); 
+	// TEST_ASSERT_EQUAL('\0', user_input[cursor]);
+	// TEST_ASSERT_EQUAL_STRING("ababxy", user_input);
+	// main_command_prompt();
+	// main_command_prompt();
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(3 , cursor); 
+	// TEST_ASSERT_EQUAL('b', user_input[cursor]);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(0 , cursor);
+	// TEST_ASSERT_EQUAL('a', user_input[cursor]);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(6 , cursor);
+	// TEST_ASSERT_EQUAL('\0', user_input[cursor]);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(7 , cursor);
+	// TEST_ASSERT_EQUAL('\0', user_input[cursor]);
+	// TEST_ASSERT_EQUAL_STRING("ababxyi", user_input);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(8 , cursor);
+	// TEST_ASSERT_EQUAL('\0', user_input[cursor]);
+	// TEST_ASSERT_EQUAL_STRING("ababxyii", user_input);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(0 , cursor);
+	// TEST_ASSERT_EQUAL_STRING("abczidef", hb->buffer[0]);
+	// TEST_ASSERT_EQUAL_STRING("ababxyii", hb->buffer[1]);
+	// TEST_ASSERT_EQUAL_STRING("", user_input);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(8 , cursor);
+	// TEST_ASSERT_EQUAL('\0', user_input[cursor]);
+	// TEST_ASSERT_EQUAL_STRING("ababxyii", user_input);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(8 , cursor);
+	// TEST_ASSERT_EQUAL('\0', user_input[cursor]);
+	// TEST_ASSERT_EQUAL_STRING("abczidef", user_input);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(8 , cursor);
+	// TEST_ASSERT_EQUAL('\0', user_input[cursor]);
+	// TEST_ASSERT_EQUAL_STRING("abczidef", user_input);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(8 , cursor);
+	// TEST_ASSERT_EQUAL('\0', user_input[cursor]);
+	// TEST_ASSERT_EQUAL_STRING("ababxyii", user_input);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(0 , cursor);
+	// TEST_ASSERT_EQUAL_STRING("", user_input);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(0 , cursor);
+	// TEST_ASSERT_EQUAL_STRING("", user_input);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(2 , cursor);
+	// TEST_ASSERT_EQUAL('c', user_input[cursor]);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(1 , cursor);
+	// TEST_ASSERT_EQUAL('b', user_input[cursor]);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(1 , cursor);
+	// TEST_ASSERT_EQUAL('c', user_input[cursor]);
+	// TEST_ASSERT_EQUAL('\0', user_input[cursor+1]);
+	// TEST_ASSERT_EQUAL_STRING("ac", user_input);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(2 , cursor);
+	// TEST_ASSERT_EQUAL('c', user_input[cursor]);
+	// TEST_ASSERT_EQUAL('\0', user_input[cursor+1]);
+	// TEST_ASSERT_EQUAL_STRING("aic", user_input);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(2 , cursor);
+	// TEST_ASSERT_EQUAL('\0', user_input[cursor]);
+	// TEST_ASSERT_EQUAL_STRING("ai", user_input);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(0 , cursor);
+	// TEST_ASSERT_EQUAL('a', user_input[cursor]);
+	// main_command_prompt();
+	// TEST_ASSERT_EQUAL(2 , cursor);
+	// TEST_ASSERT_EQUAL('\0', user_input[cursor]);
+	// TEST_ASSERT_EQUAL_STRING("ab", user_input);
+	
+// }
+
