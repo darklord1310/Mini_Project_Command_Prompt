@@ -479,9 +479,9 @@ void handle_PAGEDOWN()
 		copystringtochararray(user_input, latest_input);
 	else
 	{
-		hb->currentIndex = hb->latestIndex;
-		hb->currentIndex = readjustIndex(hb , hb->currentIndex-1);
-		copystringtochararray(user_input, hb->buffer[hb->currentIndex]);
+		int index = hb->latestIndex;
+		index = readjustIndex(hb , index-1);
+		copystringtochararray(user_input, hb->buffer[index]);
 	}
 	readjustcursor();
 	consoleClearLine();
@@ -498,9 +498,10 @@ void handle_PAGEUP()
 		copystringtochararray(user_input, latest_input);
 	else
 	{
-		hb->currentIndex = hb->startIndex;
-		copystringtochararray(user_input, hb->buffer[hb->currentIndex]);
+		int index = hb->startIndex;
+		copystringtochararray(user_input, hb->buffer[index]);
 	}
+	previous_status = 1;
 	readjustcursor();
 	consoleClearLine();
 	printBuffer(user_input);
