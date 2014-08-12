@@ -47,7 +47,7 @@ HistoryBuffer *hb;
 
 extern char user_input[MAX_BUFFER_SIZE];
 extern char latest_input[MAX_BUFFER_SIZE];
-extern int arrow_left_right_status;
+extern int arrow_left_right_home_status;
 extern int end_of_program;
 
 /*

@@ -8,7 +8,7 @@
 
 char user_input[MAX_BUFFER_SIZE];
 char latest_input[MAX_BUFFER_SIZE];
-int arrow_left_right_status;
+int arrow_left_right_home_status;
 int end_of_program;
 
 
@@ -95,7 +95,7 @@ Keycode user_input_interface()
 		user_input[cursor] = key_code;
 		put_character(user_input[cursor]);
 				
-		if(arrow_left_right_status != 1)	//if arrow left and right is not press previously
+		if(arrow_left_right_home_status != 1)	//if arrow left and right is not press previously
 		{
 			cursor++;
 			user_input[cursor] = '\0';
@@ -103,7 +103,7 @@ Keycode user_input_interface()
 		else
 		{
 			cursor++;
-			arrow_left_right_status=0;
+			arrow_left_right_home_status=0;
 		}
 			
 		copystringtochararray(latest_input,user_input);
@@ -424,7 +424,7 @@ void handle_ARROWDOWN()
 
 void handle_ARROWRIGHT()
 {
-	arrow_left_right_status=1;
+	arrow_left_right_home_status=1;
 	
 	if( user_input[cursor] != '\0')
 		cursor++;
@@ -436,7 +436,7 @@ void handle_ARROWRIGHT()
 
 void handle_ARROWLEFT()
 {
-	arrow_left_right_status=1;
+	arrow_left_right_home_status=1;
 	
 	if(cursor != 0)
 		cursor--;
@@ -451,6 +451,7 @@ void handle_ARROWLEFT()
 void handle_HOME()
 {
 	cursor = 0;
+	arrow_left_right_home_status = 1;
 	printBufferTill(user_input,cursor);
 }
 

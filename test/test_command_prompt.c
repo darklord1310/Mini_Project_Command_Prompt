@@ -12,7 +12,7 @@ void setUp(void)
 	cursor = 0;	// the length of input must be zero at first
 	next_status = 0;
 	previous_status = 0;
-	arrow_left_right_status = 0;
+	arrow_left_right_home_status = 0;
 	end_of_program = 0;
 }
 
