@@ -109,31 +109,27 @@ void test_user_input_interface_given_abc_and_enter_key_buffer_should_get_abc()
 
 
 
-void test_readjust_cursor_given_user_input_abcd_should_get_cursor_is_4()
+void test_movecursortoend_given_user_input_abcd_should_get_cursor_is_4()
 {
-	initialize_historybuffer(3);			//initialize history buffer
-		
-	//mock
-	get_character_ExpectAndReturn('a');
-	put_character_Expect('a');
-	get_character_ExpectAndReturn('b');
-	put_character_Expect('b');
-	get_character_ExpectAndReturn('c');
-	put_character_Expect('c');
-	get_character_ExpectAndReturn('d');
-	put_character_Expect('d');
-	get_character_ExpectAndReturn(ESCAPECODE2);
-	get_character_ExpectAndReturn(ARROW_LEFT);	//just to get out from the function
+	char string[] = "abcd";
 	
-	//run
-	main_command_prompt();
-	TEST_ASSERT_EQUAL(3, cursor);
-	TEST_ASSERT_EQUAL('d', user_input[cursor]);
-	TEST_ASSERT_EQUAL('\0', user_input[cursor+1]);
-	readjustcursor();
+	movecursortoend(string);
 	TEST_ASSERT_EQUAL(4, cursor);
 
 }
+
+
+
+void test_get_end_of_input_given_abcdef_should_return_6()
+{
+	char string[] = "abcdef";
+	
+	int end = get_end_of_input(string);
+	TEST_ASSERT_EQUAL(6, end);
+
+}
+
+
 
 
 // to test the handle backspace function
@@ -514,6 +510,7 @@ void test_given_abc_def_ghi_are_inside_history_buffer_when_arrow_up_is_pressed_f
 
 
 
+
 /* Given strings of abc  def  ghi  are already inside history buffer
  * Now arrow up key is pressed twice
  * Then arrow down is pressed once
@@ -563,6 +560,7 @@ void test_given_abc_def_ghi_are_inside_history_buffer_when_arrow_up_is_pressed_t
 	main_command_prompt();
 	TEST_ASSERT_EQUAL_STRING("ghi", user_input);
 }
+
 
 
 
@@ -974,6 +972,7 @@ void test_handle_DEL_given_abc_cursor_at_c_del_is_press_should_get_ab()
 }
 
 
+
 //boundary test for delete
 void test_handle_DEL_given_abc_cursor_at_behind_c_del_is_press_should_get_abc()
 {
@@ -1069,7 +1068,6 @@ void test_handle_INSERT_given_abcdef_cursor_at_c_enter_z_should_get_abzcdef()
 	get_character_ExpectAndReturn(KEY_INSERT);
 	get_character_ExpectAndReturn('z');
 
-
 	//run
 	main_command_prompt();
 	main_command_prompt();
@@ -1084,5 +1082,35 @@ void test_handle_INSERT_given_abcdef_cursor_at_c_enter_z_should_get_abzcdef()
 }
 
 
+
+
+//boundary test for INSERT
+void test_handle_INSERT_given_abcdef_cursor_at_behind_f_enter_z_should_get_abcdefz()
+{
+	initialize_historybuffer(3);			//initialize history buffer
+		
+	//mock
+	get_character_ExpectAndReturn('a');
+	put_character_Expect('a');
+	get_character_ExpectAndReturn('b');
+	put_character_Expect('b');
+	get_character_ExpectAndReturn('c');
+	put_character_Expect('c');
+	get_character_ExpectAndReturn('d');
+	put_character_Expect('d');
+	get_character_ExpectAndReturn('e');
+	put_character_Expect('e');
+	get_character_ExpectAndReturn('f');
+	put_character_Expect('f');
+	get_character_ExpectAndReturn(ESCAPECODE2);
+	get_character_ExpectAndReturn(KEY_INSERT);
+	get_character_ExpectAndReturn('z');
+
+	//run
+	main_command_prompt();
+	TEST_ASSERT_EQUAL(7 , cursor); 
+	TEST_ASSERT_EQUAL('\0', user_input[cursor]);
+	TEST_ASSERT_EQUAL_STRING("abcdefz", user_input);
+}
 
 

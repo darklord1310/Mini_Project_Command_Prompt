@@ -95,7 +95,7 @@ Keycode user_input_interface()
 		user_input[cursor] = key_code;
 		put_character(user_input[cursor]);
 				
-		if(arrow_left_right_home_status != 1)	//if arrow left and right is not press previously
+		if(arrow_left_right_home_status != 1)	//if arrow left, arrow right and HOME are not press previously
 		{
 			cursor++;
 			user_input[cursor] = '\0';
@@ -211,11 +211,11 @@ void check_special_keys(int key_code)
 
 
 //adjust the cursor to the end of the user input
-void readjustcursor()
+void movecursortoend(char array[])
 {
-	int i;
+	int i=0;
 	
-	while ( user_input[i] != '\0')
+	while ( array[i] != '\0')
 	{
 		i++;
 	}
@@ -291,7 +291,8 @@ void movecharactersbackward(int endofinput)
 		if(user_input[endofinput-y] == user_input[cursor])
 		{
 			user_input[cursor] = get_key_press();
-			cursor++;
+			if(user_input[cursor] != '\0')
+				cursor++;
 			break;
 		}
 		x--;
@@ -302,17 +303,19 @@ void movecharactersbackward(int endofinput)
 
 
 //get the index of the end of the input
-int get_end_of_input()
+int get_end_of_input(char array[])
 {
 	int j=0,length=0;
 	
-	while ( user_input[j] != '\0')
+	while ( array[j] != '\0')
 	{
 		length++;
 		j++;
 	}
 	return length;
 }
+
+
 
 
 
@@ -325,7 +328,7 @@ void handle_BACKSPACE()
 	
 	if(user_input[cursor] == '\0')
 	{
-		endofinput = get_end_of_input();
+		endofinput = get_end_of_input(user_input);
 		user_input[endofinput-1] = '\0';
 		cursor--;
 	
@@ -375,6 +378,7 @@ void copystringtochararray(char array[] , char *string)
 
 
 
+
 /* To perform enter
  *
  */
@@ -399,7 +403,7 @@ void handle_ARROWUP()
 
 	char *temp = historyBufferReadPrevious(hb);
 	copystringtochararray(user_input, temp);
-	readjustcursor();
+	movecursortoend(user_input);
 	consoleClearLine();
 	printBuffer(user_input);
 }
@@ -414,7 +418,7 @@ void handle_ARROWDOWN()
 {
 	char *temp = historyBufferReadNext(hb);
 	copystringtochararray(user_input, temp);
-	readjustcursor();
+	movecursortoend(user_input);
 	consoleClearLine();
 	printBuffer(user_input);
 }
@@ -484,7 +488,7 @@ void handle_PAGEDOWN()
 		index = readjustIndex(hb , index-1);
 		copystringtochararray(user_input, hb->buffer[index]);
 	}
-	readjustcursor();
+	movecursortoend(user_input);
 	consoleClearLine();
 	printBuffer(user_input);
 }
@@ -503,7 +507,7 @@ void handle_PAGEUP()
 		copystringtochararray(user_input, hb->buffer[index]);
 	}
 	previous_status = 1;
-	readjustcursor();
+	movecursortoend(user_input);
 	consoleClearLine();
 	printBuffer(user_input);
 }
@@ -515,7 +519,7 @@ void handle_INSERT()
 {
 	int endofinput;
 	
-	endofinput = get_end_of_input();
+	endofinput = get_end_of_input(user_input);
 	movecharactersbackward(endofinput);
 	copystringtochararray(latest_input , user_input);
 	consoleClearLine();
@@ -527,7 +531,7 @@ void handle_INSERT()
 
 void handle_END()
 {
-	readjustcursor();
+	movecursortoend(user_input);
 	printBufferTill(user_input,cursor);
 }
 
