@@ -9,7 +9,7 @@
 char user_input[MAX_BUFFER_SIZE];
 char latest_input[MAX_BUFFER_SIZE];
 int arrow_left_right_home_status;
-int end_of_program;
+int end_of_program;		//indicator for end of the program
 
 
 /*  To check for the input is special key or not
@@ -480,8 +480,7 @@ void handle_DEL()
 
 void handle_PAGEDOWN()
 {
-	if( hb->buffer[hb->startIndex] == NULL)
-		copystringtochararray(user_input, latest_input);
+	if( hb->buffer[hb->startIndex] == NULL);
 	else
 	{
 		int index = hb->latestIndex;
@@ -499,8 +498,7 @@ void handle_PAGEDOWN()
 
 void handle_PAGEUP()
 {
-	if( hb->buffer[hb->startIndex] == NULL)
-		copystringtochararray(user_input, latest_input);
+	if( hb->buffer[hb->startIndex] == NULL);
 	else
 	{
 		int index = hb->startIndex;
